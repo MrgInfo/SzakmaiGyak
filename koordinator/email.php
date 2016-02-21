@@ -1,7 +1,5 @@
 ﻿<?
 
-require '../header.php';
-
 load_post();
 
 $list = array();
@@ -18,10 +16,4 @@ foreach( array_unique( $list ) as $email ) {
     $email_list .= trim( str_replace( array( "<", ">" ), array( "&lt;", "&gt;" ), $email ) );
 }
 
-?>
-		<textarea style="width: 100%; height: 90%"><?=$email_list?></textarea>
-<?
-
-require '../footer.php';
-
-?>
+echo($email_list);
