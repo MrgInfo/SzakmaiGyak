@@ -85,12 +85,27 @@ function concatAddress( $def, $isz, $var, $kt, $hsz ) {
 	return '';
 }
 
-function all_read() {
+function _read( $query ) {
     $conn = new mysqli( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
     if( ! $conn ) {
         return false;
     }
     $conn->set_charset( 'utf8' );
+    $result = $conn->query( $query );
+    $records = array();
+    while( $row = $result->fetch_assoc() ) {
+        $record =  array();
+        foreach( $row as $key => $value ) {
+            $record[$key] = $value;
+        }
+        $records[] = $record;
+    }
+    $result->free();
+    $conn->close();
+    return $records;
+}
+
+function all_read() {
     $select = <<<QUERY
    SELECT j.id,
           j.nev,
@@ -130,24 +145,9 @@ LEFT JOIN konzulensek k
        ON f.konzulens = k.id
  ORDER BY j.nev
 QUERY;
-    $stmt = $conn->prepare( $select );
-    //$stmt->bind_param( 's', posted( 'jelszo', null ) );
-    if( ! $stmt->execute() ) {
-        $stmt->close();
-        $conn->close();
-        return false;
-    }
-    $result = $stmt->get_result();
-    $records = array();
-    while ($row = $result->fetch_assoc()) {
-        $record =  array();
-        foreach ($row as $key => $value) {
-            $record[$key] = $value;
-        }
-        $records[] = $record;
-    }
-    $result->free();
-    $stmt->close();
-    $conn->close();
-    return $records;
+    return _read( $select );
+}
+
+function konzulens_read() {
+
 }
