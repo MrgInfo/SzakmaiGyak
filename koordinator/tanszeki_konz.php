@@ -88,5 +88,7 @@ if( $done ) {
 		</footer>
 <?
 }
+
 require '../footer.php';
+
 ?>
