@@ -1,4 +1,7 @@
 ﻿<?
+
+require_once 'config.php';
+
 $prefix = strpos($_SERVER['REQUEST_URI'], '/koordinator/') >= 0
     ? '..'
     : '.';

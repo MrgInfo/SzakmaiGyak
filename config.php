@@ -1,5 +1,7 @@
 ﻿<?
 
+$_SERVER['REQUEST_URI'] = '/';
+
 define( 'EXEC_DIR',    '/usr/bin' );
 define( 'DB_HOST',     'nikipi.gotdns.org' );
 define( 'DB_USER',     'szakmaigyak' );
@@ -15,5 +17,3 @@ define( 'JEL_HATARIDO',      '2016-04-27' );
 define( 'KONZULENS',         'Dr. Körtélyesi Gábor' );
 define( 'ALAIRO_TANSZEK',    'Dr. Horák Péter' );
 define( 'ALAIRO_KAR',        'Dr. Czigány Tibor' );
-
-?>
