@@ -1,13 +1,17 @@
-﻿<?
+﻿<?php
 
-require '../header.php';
+$_SERVER['REQUEST_URI'] = '/koordinator';
+
 require_once '../functions.php';
+require '../header.php';
 
 $table = all_read();
 var_dump($table);
 
 ?>
-<? if( $table === false ) { ?>
+<?php 
+if( $table === false ) { 
+    ?>
         <div class="jumbotron">
             <h2>Szakmai gyakorlat</h2>
             <p>Az adatok lekérdezése sikertelen!<p>
@@ -16,9 +20,11 @@ var_dump($table);
                 <a href="setup.php" class="btn btn-default" role="button">Beállítások</a>
             </div>
         </div>
-<? } else { ?>
+    <?php
+} else { 
+    ?>
 		<header>
-			<h1><?=GYAKORLAT_EV; ?>. évi szakmai gyakorlat</h1>
+			<h1><?=GYAKORLAT_EV?>. évi szakmai gyakorlat</h1>
 		</header>
 		<div class="content">
 			<form method="post" action="email.php" target="_blank" style="height: 80%">
@@ -75,27 +81,27 @@ var_dump($table);
 							<td><?=$row['mobil']?></td>
 							<td>
 <?          if( ! empty( $row[email] ) ) { ?>
-								<input type="checkbox" name="email[]" value="<?= $row[nev] ?> &lt;<?= $row[email]; ?>&gt;" checked>
-								<a href="mailto:<?= $row[email]; ?>"> <?= $row[email]; ?></a>
+								<input type="checkbox" name="email[]" value="<?=$row['nev']?> &lt;<?=$row['email']?>&gt;" checked>
+								<a href="mailto:<?=$row['email']?>"> <?=$row['email']?></a>
 
 <?          } ?>
 							</td>
-							<td><?= $row[int_nev]; ?></td>
-							<td><?= $row[int_cim]; ?></td>
-							<td><?= $row[cim]; ?></td>
-							<td class="break"><?= $row[feladat]; ?></td>
-							<td><?= $row[int_konz_nev]; ?></td>
-							<td><?= $row[int_konz_beoszt]; ?></td>
-							<td><?= $row[int_konz_tel]; ?></td>
+							<td><?=$row['int_nev']?></td>
+							<td><?=$row['int_cim']?></td>
+							<td><?=$row['cim']?></td>
+							<td class="break"><?=$row['feladat']?></td>
+							<td><?=$row['int_konz_nev']?></td>
+							<td><?=$row['int_konz_beoszt']?></td>
+							<td><?=$row['int_konz_tel']?></td>
 							<td>
-<?          if( ! empty( $row[int_konz_emial] ) ) { ?>
-								<input type="checkbox" name="int_konz_email[]" value="<?= $row[int_konz_nev]; ?> &lt;<?= $row[int_konz_emial]; ?>&gt;" checked>
-								<a href="mailto:<?= $row[int_konz_emial]; ?>"><?= $row[int_konz_emial]; ?></a>
+<?          if( ! empty( $row['int_konz_emial'] ) ) { ?>
+								<input type="checkbox" name="int_konz_email[]" value="<?=$row['int_konz_nev']?> &lt;<?=$row['int_konz_emial']?>&gt;" checked>
+								<a href="mailto:<?=$row['int_konz_emial']?>"><?=$row['int_konz_emial']?></a>
 <?          } ?>
 							</td>
-			 				<td><?= $row[k_nev]; ?></td>
-							<td><?= $row[k_beoszt]; ?></td>
-							<td><?= $row[k_tel]; ?></td>
+			 				<td><?=$row['k_nev']?></td>
+							<td><?=$row['k_beoszt']?></td>
+							<td><?=$row['k_tel']?></td>
 							<td>
 <?          if( ! empty(  $row[k_email] ) ) { ?>
 								<input type="checkbox" name="k_email[]" value="<?= $row[k_nev]; ?> &lt;<?= $row[k_email]; ?>&gt;" checked>
@@ -114,6 +120,7 @@ var_dump($table);
 			<div id="toolbar">
 				<a href="../jelentkezes.php" class="btn btn-default" role="button">Új jelentkezés</a>
 				<a href="excel.php" class="btn btn-default" role="button">Excel</a>
+                <a href="excel.php" class="btn btn-default" role="button">Excel</a>
 				<a href="setup.php" class="btn btn-default" role="button">Beállítások</a>
 			</div>
 		</div>

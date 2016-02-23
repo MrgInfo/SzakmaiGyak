@@ -1,8 +1,7 @@
-﻿<?
+﻿<?php
 
 require_once 'functions.php';
 require 'header.php';
-
 
 function jelentkezesi_read() {
     $conn = new mysqli( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );

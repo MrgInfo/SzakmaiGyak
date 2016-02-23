@@ -1,6 +1,7 @@
-﻿<?
+﻿<?php
+
 include '../header.php';
-if( !$_POST[modositas] ) {
+if( !$_POST['modositas'] ) {
 	$done = false;
 	if( $conn = connect() ) {
 		$id = escape( $_GET[id], $conn );
@@ -169,7 +170,7 @@ END;
 } else {
 ?>
 		<header>
-			<h1><?=GYAKORLAT_EV; ?>. évi szakmai gyakorlat</h1>
+			<h1><?=GYAKORLAT_EV?>. évi szakmai gyakorlat</h1>
 		</header>
 		<div class="content">
 			<h2>Feladatkiírás, módosítás</h2>
@@ -326,6 +327,8 @@ END;
 		</footer>
 <?
 }
+
 include '../footer.php';
+
 ?>
 
