@@ -300,7 +300,7 @@ if( ! $done )
                 </tr>
 
                 <tr>
-                    <td class="form-label"><label class="control-label label-req" for="fir">FIR azonosító:</label></td>
+                    <td class="form-label"><label class="control-label label-req" for="fir">Oktatási azonosító:</label></td>
                     <td><input type="text" id="fir" name="neptunkod" value="<?=posted( 'fir' )?>" size="6" maxlength="6" <?= $readonly ?> class="form-control"></td>
                 </tr>
                 <tr>
