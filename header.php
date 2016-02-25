@@ -15,10 +15,10 @@ $prefix = isset($_SERVER['REQUEST_URI']) && ( strpos($_SERVER['REQUEST_URI'], '/
 		<meta name="viewport" content="width=device-width,initial-scale=1" />
 		<meta name="robots" content="noarchive,nofollow,noimageindex,noindex,noodp,nosnippet" />
 		<meta name="author" content="Groma István Ph.D." />
-		<title><?= GYAKORLAT_EV; ?>. évi szakmai gyakorlat</title>
+		<title><?=GYAKORLAT_EV?>. évi szakmai gyakorlat</title>
 		<link rel="stylesheet" href="<?=$prefix?>/css/bootstrap.min.css" />
 		<link rel="stylesheet" href="<?=$prefix?>/css/bootstrap-theme.min.css" />
 		<link rel="stylesheet" href="<?=$prefix?>/css/bootstrap-table.min.css" />
 		<link rel="stylesheet" href="<?=$prefix?>/css/szakmaigyak.css" />
 	</head>
-	<body class="container-fluid">
+	<body class="container<?= isset($fluid) ? '-fluid' : '' ?>">
