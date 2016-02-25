@@ -12,7 +12,6 @@ define( 'GYAKORLAT_KEZDETE', 'június 30' );
 define( 'GYAKORLAT_VEGE',    'augusztus 30' );
 define( 'KEPZESKOD',         '' );
 define( 'FELEV',             '' );
-
 define( 'BEADASI_HATARIDO',  'szeptember  11' );
 define( 'JEL_HATARIDO',      '2016-04-27' );
 define( 'KONZULENS',         'Dr. Körtélyesi Gábor' );
