@@ -1,166 +1,9 @@
 ﻿<?php
 
+$_SERVER['REQUEST_URI'] = '/';
+
 require_once 'functions.php';
 require 'header.php';
-
-function jelentkezesi_read() {
-    $conn = new mysqli( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
-    if( ! $conn ) {
-        return false;
-    }
-    $conn->set_charset( 'utf8' );
-    $select = <<<QUERY
-SELECT j.id,
-       j.nev,
-       j.neptunkod,
-       j.allando_cim,
-       j.ideiglenes_cim,
-       j.mobil,
-       j.email,
-       j.kollegium,
-       j.int_nev,
-       j.int_cim,
-       j.int_konz_nev,
-       j.int_konz_beoszt,
-       j.int_konz_tel,
-       j.int_konz_emial,
-       j.cim,
-       j.feladat,
-       j.megjegyzes,
-       CASE j.jelszo WHEN PASSWORD(?) THEN 1 ELSE 0 END password
-  FROM jelentkezesi_lap j
- WHERE j.neptunkod = UPPER(?)
-QUERY;
-    $stmt = $conn->prepare( $select );
-    $stmt->bind_param( 's', posted( 'jelszo', null ) );
-    $stmt->bind_param( 's', posted( 'neptunkod', null ) );
-    if( ! $stmt->execute() ) {
-        $stmt->close();
-        $conn->close();
-        return false;
-    }
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    if( ! $row ) {
-        $stmt->close();
-        $conn->close();
-        return false;
-    }
-    foreach( $row as $key => $value ) {
-        $_POST[$key] = $value;
-    }
-    $stmt->close();
-    $conn->close();
-    return true;
-}
-
-function jelentkezesi_edit() {
-    $id = posted( 'id' );
-    $nev = posted( 'nev' );
-    $neptunkod = posted( 'neptunkod' );
-    $jelszo = posted( 'jelszo' );
-    $email = posted( 'email' );
-    $allando_cim = posted( 'allando_cim', null );
-    $ideiglenes_cim = posted( 'ideiglenes_cim', null );
-    $mobil = posted( 'mobil', null );
-    $kollegium = posted( 'kollegium', null );
-    $int_nev = posted( 'int_nev', null );
-    $int_cim = posted( 'int_cim', null );
-    $int_konz_nev = posted( 'int_konz_nev', null );
-    $int_konz_beoszt = posted( 'int_konz_beoszt', null );
-    $int_konz_tel = posted( 'int_konz_tel', null );
-    $int_konz_emial = posted( 'int_konz_emial', null );
-    $cim = posted( 'cim', null );
-    $feladat = posted( 'feladat', null );
-    $megjegyzes = posted( 'megjegyzes', null );
-    $conn = new mysqli( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
-    if( ! $conn ) {
-        return false;
-    }
-    $conn->set_charset( 'utf8' );
-    $insert = <<<QUERY
-INSERT INTO jelentkezesi_lap (
-            nev,
-            neptunkod,
-            jelszo,
-            email,
-            allando_cim,
-            ideiglenes_cim,
-            mobil,
-            kollegium,
-            int_nev,
-            int_cim,
-            int_konz_nev,
-            int_konz_beoszt,
-            int_konz_tel,
-            int_konz_emial,
-            cim,
-            feladat,
-            megjegyzes)
-     VALUES (?, UPPER(?), PASSWORD(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-QUERY;
-    $update = <<<QUERY
-UPDATE jelentkezesi_lap
-   SET allando_cim = ?,
-       ideiglenes_cim = ?,
-       mobil = ?,
-       kollegium = ?,
-       int_nev = ?,
-       int_cim = ?,
-       int_konz_nev = ?,
-       int_konz_beoszt = ?,
-       int_konz_tel = ?,
-       int_konz_emial = ?,
-       cim = ?,
-       feladat = ?,
-       megjegyzes = ?
- WHERE id = ?
-QUERY;
-    if( $id ) {
-        $stmt = $conn->prepare( $update );
-    }
-    else {
-        $stmt = $conn->prepare( $insert );
-        $stmt->bind_param( 's', $nev );
-        $stmt->bind_param( 's', $neptunkod );
-        $stmt->bind_param( 's', $jelszo );
-        $stmt->bind_param( 's', $email );
-    }
-    $stmt->bind_param( 's', $allando_cim );
-    $stmt->bind_param( 's', $ideiglenes_cim );
-    $stmt->bind_param( 's', $mobil );
-    $stmt->bind_param( 'i', $kollegium );
-    $stmt->bind_param( 's', $int_nev );
-    $stmt->bind_param( 's', $int_cim );
-    $stmt->bind_param( 's', $int_konz_nev );
-    $stmt->bind_param( 's', $int_konz_beoszt );
-    $stmt->bind_param( 's', $int_konz_tel );
-    $stmt->bind_param( 's', $int_konz_emial );
-    $stmt->bind_param( 's', $cim );
-    $stmt->bind_param( 's', $feladat );
-    $stmt->bind_param( 's', $megjegyzes );
-    if( $id ) {
-        $stmt->bind_param( 'i', $id );
-    }
-    $result = $stmt->execute();
-    $stmt->close();
-    $conn->close();
-    return $result;
-}
-
-function hallgato_mail() {
-    $subject = 'Jelentkezés szakmai gyakorlatra';
-    $body  = <<<MAIL
-Kedves $_POST[nev]!
-
-Ön sikeresen jelentkezett szakmai gyakorlatra. A megadott adatokat, a tájékoztatóban megadott határidőig,
-a megadott Neptun-kóddal ($_POST[neptunkod]) és a következő jelszó segítségével tudja módosítani: $_POST[jelszo].
-
----
-Erre az e-mailre ne válaszoljon!
-MAIL;
-    return smartmail( $_POST['nev'], $_POST['email'], $subject, $body );
-}
 
 $done = false;
 load_post();
@@ -198,10 +41,12 @@ if( isset( $_POST['szerkesztes'] ) ||
     if(
         posted( 'nev' ) == '' ||
         strlen( posted( 'neptunkod' ) ) != 6 ||
+        strlen( posted( 'fir' ) ) != 11 ||
         posted( 'allando_cim' ) == '' ||
         posted( 'mobil' ) == '' ||
         posted( 'email'  ) == '' ||
-        posted( 'kollegium' ) == ''
+        posted( 'kollegium' ) == '' ||
+        posted( 'kepzes' ) == ''
     ) {
         $missing = true;
     }
@@ -301,7 +146,7 @@ if( ! $done )
 
                 <tr>
                     <td class="form-label"><label class="control-label label-req" for="fir">Oktatási azonosító:</label></td>
-                    <td><input type="text" id="fir" name="neptunkod" value="<?=posted( 'fir' )?>" size="6" maxlength="6" <?= $readonly ?> class="form-control"></td>
+                    <td><input type="text" id="fir" name="neptunkod" value="<?=posted( 'fir' )?>" size="11" maxlength="11" <?= $readonly ?> class="form-control"></td>
                 </tr>
                 <tr>
                     <td class="form-label"><label class="control-label label-req" for="allando_cim">Állandó lakóhely címe:</label></td>
