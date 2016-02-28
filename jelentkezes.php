@@ -33,10 +33,16 @@ $_POST['int_konz_tel'] = trimPhone(
 $_POST['jelszo'] = generatePassword();
 var_dump( $_POST );
 
+
+$jelentkezes = isset( $_POST['jelentkezes'] );
+$szerkesztes = isset( $_POST['szerkesztes'] );
+$feladatkiiras =
+    isset( $_SERVER['REQUEST_URI'] )
+    &&
+    substr( $_SERVER['REQUEST_URI'], -strlen( '/feladat.php' ) ) == '/feladat.php';
+
 $missing = false;
-if( isset( $_POST['szerkesztes'] ) ||
-    isset( $_POST['jelentkezes'] )
-) {
+if( $jelentkezes || $szerkesztes ) {
     if(
         posted( 'nev' ) == '' ||
         strlen( posted( 'neptunkod' ) ) != 6 ||
@@ -51,7 +57,7 @@ if( isset( $_POST['szerkesztes'] ) ||
     }
 }
 
-if( ! $missing && isset( $_POST['szerkesztes'] ) ) {
+if( ! $missing && $szerkesztes ) {
 	if( empty( $_POST['id'] ) ) {
         if( ! jelentkezesi_read() ) {
             ?>
@@ -83,9 +89,8 @@ if( ! $missing && isset( $_POST['szerkesztes'] ) ) {
         }
         $done = true;
 	}
-} else if( ! $missing && isset( $_POST['jelentkezes'] ) ) {
-    if(
-        jelentkezesi_edit()
+} else if( ! $missing && $jelentkezes ) {
+    if( jelentkezesi_edit()
         &&
         hallgato_mail()
     ) {
@@ -97,6 +102,7 @@ if( ! $missing && isset( $_POST['szerkesztes'] ) ) {
 </div>
         <?php
     } else {
+        jelentkezesi_delete();
         ?>
 <div class="jumbotron">
     <h2>Jelentkezés</h2>
@@ -132,7 +138,7 @@ if( ! $done )
         <table class="form">
             <tbody>
                 <tr>
-                    <td class="sep" colspan="2"><label>1. Személyes adatok</label></td>
+                    <td class="sep" colspan="2"><label>Személyes adatok</label></td>
                 </tr>
                 <tr>
                     <td class="form-label">
@@ -245,11 +251,11 @@ if( ! $done )
                     <td>
                         <div class="controls form-inline">
                             <div class="radio">
-                                <input type="radio" id="kepzes_bsc" name="kepzes" value="0" <?= posted( 'kepzes' ) == 0 ?  '' : 'checked' ?>>
+                                <input type="radio" id="kepzes_bsc" name="kepzes" value="1" <?= posted( 'kepzes', 0 ) ?  '' : 'checked' ?>>
                                 <label for="kepzes_bsc">BsC</label>
                             </div>
                             <div class="radio">
-                                <input type="radio" id="kepzes_msc" name="kepzes" value="1" <?= posted( 'kepzes' ) == 1 ? '' : 'checked' ?>>
+                                <input type="radio" id="kepzes_msc" name="kepzes" value="0" <?= posted( 'kepzes', 0 ) ? '' : 'checked' ?>>
                                 <label for="kepzes_msc">MsC</label>
                             </div>
                         </div>
@@ -262,11 +268,11 @@ if( ! $done )
                     <td>
                         <div class="controls form-inline">
                             <div class="radio">
-                                <input type="radio" id="kollegium_igen" name="kollegium" value="1" <?= posted( 'kollegium' ) == 1 ?  '' : 'checked' ?>>
+                                <input type="radio" id="kollegium_igen" name="kollegium" value="1" <?= posted( 'kollegium', 0 ) ?  '' : 'checked' ?>>
                                 <label for="kollegium_igen">Igen</label>
                             </div>
                             <div class="radio">
-                                <input type="radio" id="kollegium_nem" name="kollegium" value="0" <?= posted( 'kollegium' ) == 0 ?  '' : 'checked' ?>>
+                                <input type="radio" id="kollegium_nem" name="kollegium" value="0" <?= posted( 'kollegium', 0 ) ?  '' : 'checked' ?>>
                                 <label for="kollegium_nem">Nem</label>
                             </div>
                         </div>
@@ -274,7 +280,7 @@ if( ! $done )
                 </tr>
                 <tr>
                     <td class="sep" colspan="2">
-                        <label>2. A fogadó intézmény adatai</label>
+                        <label>A fogadó intézmény adatai</label>
                     </td>
                 </tr>
                 <tr>
@@ -307,7 +313,7 @@ if( ! $done )
                     </td>
                 </tr>
                 <tr>
-                    <td class="sep" colspan="2"><label>3. Konzulens</label></td>
+                    <td class="sep" colspan="2"><label>Intézményi konzulens</label></td>
                 </tr>
                 <tr>
                     <td class="form-label">
@@ -343,7 +349,7 @@ if( ! $done )
                 </tr>
                 <tr>
                     <td class="sep" colspan="2">
-                        <label>4. Igazoló</label>
+                        <label>Igazoló</label>
                     </td>
                 </tr>
                 <tr>
@@ -378,8 +384,44 @@ if( ! $done )
                         <input type="email" id="int_ig_emial" name="int_ig_emial" value="<?= posted( 'int_ig_emial' ) ?>" size="60" maxlength="30" class="form-control">
                     </td>
                 </tr>
+
                 <tr>
-                    <td class="sep" colspan="2"><label>4. A feladat</label></td>
+                    <td class="sep" colspan="2"><label>Tanszéki konzulens</label></td>
+                </tr>
+                <tr>
+                    <td class="form-label">
+                            <label class="control-label label-req" for="tan_konz">Neve:</label>
+                    </td>
+                    <td>
+                        <div class="controls form-inline">
+                            <select id="tan_konz" name="tan_konz" class="form-control">
+    <?php
+    $selection = false;
+    $konzulens = posted( 'tan_konz', null );
+    $table = konzulens_read();
+    foreach( $table as $row ) {
+        if( $row['id'] == $konzulens
+            ||
+            $row['nev'] == KONZULENS ) {
+            ?>
+                                <option value="<?= $row['id'] ?>" selected><?= $row['nev'] ?></option>
+            <?
+            $selection = true;
+        } else {
+            ?>
+                                <option value="<?= $row['id'] ?>"><?= $row['nev'] ?></option>
+            <?
+        }
+    }
+    ?>
+                                <option value="" <?= $selection ? '' : 'selected' ?>>&ndash; &deg; &ndash;</option>
+                            </select>
+                            <a href="tanszeki_konz.php" target="_blank" role="button" class="btn btn-default"> + </a>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="sep" colspan="2"><label>A feladat</label></td>
                 </tr>
                 <tr>
                     <td class="form-label">
@@ -425,11 +467,11 @@ if( ! $done )
                     <td colspan="2">
                         <div class="btn-group" role="group">
     <?php
-    if( isset( $_POST['szerkesztes'] ) ) {
+    if( $szerkesztes ) {
         ?>
                             <input type="submit" name="szerkesztes" value="Módosítás" class="btn btn-primary">
         <?php
-    } elseif( isset( $_POST['jelentkezes'] ) ) {
+    } else {
         ?>
                             <input type="submit" name="jelentkezes"  value="Jelentkezés" class="btn btn-primary">
         <?php

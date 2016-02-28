@@ -1,3 +1,6 @@
+extension=php_mbstring.dll
+extension=php_mysqli.dll
+
 Bekérni: FIR azonosító, BsC/MsC, Igazoló & konzulens, igazolás dátuma, Időtartam, gyakorlat eleje - vége (hossza hetekben kiszámolni)
 
 Settings: Telj elfogadás dátuma

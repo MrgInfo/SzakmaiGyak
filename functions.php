@@ -18,6 +18,7 @@ function posted( $name, $default = '' ) {
 }
 
 function smartmail( $name, $email, $subject, $body ) {
+    return true;
 	$from = EMAIL_FROM;
 	$headers = <<<END
 MIME-Version: 1.0
@@ -28,7 +29,8 @@ END;
 	mb_internal_encoding( "utf-8" );
 	$subject = mb_encode_mimeheader( $subject, "utf-8", "B" );
 	$to = mb_encode_mimeheader( $name, "utf-8", "B" ) . " <$email>";
-	return @mail( $to, $subject, $body, $headers, "-f$from" );
+    $return = mail( $to, $subject, $body, $headers, "-f$from" );
+	return $return;
 }
 
 function format( $str ) {
@@ -78,20 +80,30 @@ function trimPhone( $phone ) {
 }
 
 function concatAddress( $def, $isz, $var, $kt, $hsz ) {
-	if( $def != '' )
-		return $def;
-	if( $isz != '' && $var != '' && $kt != '' && $hsz != '' )
-		return trim("$isz $var, $kt $hsz.", '.');
-	return '';
+	if( ! empty( $def ) ) {
+        return $def;
+    }
+	if( ! empty( $isz ) &&
+        ! empty( $var ) &&
+        ! empty( $kt ) &&
+        ! empty( $hsz ) ) {
+        return trim("$isz $var, $kt $hsz.", '.');
+    }
+	return null;
 }
 
 function _read( $query ) {
     $conn = new mysqli( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
     if( ! $conn ) {
+        echo $conn->error;
         return false;
     }
     $conn->set_charset( 'utf8' );
     $result = $conn->query( $query );
+    if( ! $result ) {
+        echo $conn->error;
+        return false;
+    }
     $records = array();
     while( $row = $result->fetch_assoc() ) {
         $record =  array();
@@ -107,49 +119,53 @@ function _read( $query ) {
 
 function all_read() {
     $select = <<<QUERY
-   SELECT j.id,
-          j.nev,
-          j.neptunkod,
-          j.allando_cim,
-          j.allando_tel,
-          j.ideiglenes_cim,
-          j.ideiglenes_tel,
-          j.mobil,
-          j.email,
-          j.kollegium,
-          j.int_nev,
-          j.int_cim,
-          j.int_vez_nev,
-          j.int_vez_beoszt,
-          j.int_vez_tel,
-          j.int_vez_email,
-          j.int_konz_nev,
-          j.int_konz_beoszt,
-          j.int_konz_tel,
-          j.int_konz_emial,
-          j.cim,
-          j.feladat,
-          j.megjegyzes,
-          UNIX_TIMESTAMP(j.jelentkezes) jelentkezes,
-          k.nev k_nev,
-          k.beoszt k_beoszt,
-          k.tel k_tel,
-          k.email k_email,
-          f.leiras,
-          f.kovetelmenyek,
-          UNIX_TIMESTAMP(f.kiiras) kiiras
-     FROM jelentkezesi_lap j
-LEFT JOIN feladatlap f
-       ON j.id = f.id
-LEFT JOIN konzulensek k
-       ON f.konzulens = k.id
- ORDER BY j.nev
+SELECT id,
+       nev,
+       neptunkod,
+       omazonosito,
+       allando_cim,
+       allando_tel,
+       ideiglenes_cim,
+       ideiglenes_tel,
+       mobil,
+       email,
+       kollegium,
+       bsc,
+       int_nev,
+       int_cim,
+       int_konz_nev,
+       int_konz_beoszt,
+       int_konz_tel,
+       int_konz_email,
+       tan_konz,
+       tan_konz_nev,
+       tan_konz_beoszt,
+       tan_konz_tel,
+       tan_konz_email,
+       int_ig_nev,
+       int_ig_beoszt,
+       int_ig_tel,
+       int_ig_email,
+       cim,
+       feladat,
+       megjegyzes,
+       UNIX_TIMESTAMP(eleje) eleje,
+       UNIX_TIMESTAMP(vege) vege,
+       UNIX_TIMESTAMP(jelentkezes) jelentkezes,
+       UNIX_TIMESTAMP(modositas) modositas
+  FROM jelentkezesi_lap
 QUERY;
     return _read( $select );
 }
 
 function konzulens_read() {
-
+    $select = <<<QUERY
+  SELECT id,
+         nev
+    FROM konzulensek
+ORDER BY nev
+QUERY;
+    return _read( $select );
 }
 
 function jelentkezesi_read() {
@@ -159,78 +175,136 @@ function jelentkezesi_read() {
     }
     $conn->set_charset( 'utf8' );
     $select = <<<QUERY
-SELECT j.id,
-       j.nev,
-       j.neptunkod,
-       j.allando_cim,
-       j.ideiglenes_cim,
-       j.mobil,
-       j.email,
-       j.kollegium,
-       j.int_nev,
-       j.int_cim,
-       j.int_konz_nev,
-       j.int_konz_beoszt,
-       j.int_konz_tel,
-       j.int_konz_emial,
-       j.cim,
-       j.feladat,
-       j.megjegyzes,
-       CASE j.jelszo WHEN PASSWORD(?) THEN 1 ELSE 0 END password
-  FROM jelentkezesi_lap j
- WHERE j.neptunkod = UPPER(?)
+SELECT id,
+       nev,
+       neptunkod,
+       omazonosito,
+       allando_cim,
+       ideiglenes_cim,
+       mobil,
+       email,
+       kollegium,
+       bsc,
+       int_nev,
+       int_cim,
+       int_konz_nev,
+       int_konz_beoszt,
+       int_konz_tel,
+       int_konz_email,
+       tan_konz,
+       tan_konz_nev,
+       tan_konz_beoszt,
+       tan_konz_tel,
+       tan_konz_email,
+       int_ig_nev,
+       int_ig_beoszt,
+       int_ig_tel,
+       int_ig_email,
+       cim,
+       feladat,
+       megjegyzes,
+       eleje,
+       vege,
+       CASE jelszo WHEN PASSWORD(?) THEN 1 ELSE 0 END password
+  FROM jelentkezesi_lap
+ WHERE neptunkod = UPPER(?)
 QUERY;
     $stmt = $conn->prepare( $select );
     $stmt->bind_param( 's', posted( 'jelszo', null ) );
     $stmt->bind_param( 's', posted( 'neptunkod', null ) );
     if( ! $stmt->execute() ) {
-        $stmt->close();
-        $conn->close();
+        @$stmt->close();
+        @$conn->close();
         return false;
     }
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
     if( ! $row ) {
-        $stmt->close();
-        $conn->close();
+        @$stmt->close();
+        @$conn->close();
         return false;
     }
     foreach( $row as $key => $value ) {
         $_POST[$key] = $value;
     }
-    $stmt->close();
-    $conn->close();
+    @$stmt->close();
+    @$conn->close();
     return true;
 }
 
+function jelentkezesi_delete() {
+}
+
 function jelentkezesi_edit() {
-    $id = posted( 'id' );
-    $nev = posted( 'nev' );
-    $neptunkod = posted( 'neptunkod' );
-    $jelszo = posted( 'jelszo' );
-    $email = posted( 'email' );
+    $id = posted( 'id', null );
+    $nev = posted( 'nev', null );
+    $neptunkod = posted( 'neptunkod', null );
+    $omazonosito = posted( 'fir', null );
+    $jelszo = posted( 'jelszo', null );
+    $email = posted( 'email', null );
     $allando_cim = posted( 'allando_cim', null );
     $ideiglenes_cim = posted( 'ideiglenes_cim', null );
     $mobil = posted( 'mobil', null );
-    $kollegium = posted( 'kollegium', null );
+    $kollegium = posted( 'kollegium', 0 );
     $int_nev = posted( 'int_nev', null );
     $int_cim = posted( 'int_cim', null );
     $int_konz_nev = posted( 'int_konz_nev', null );
     $int_konz_beoszt = posted( 'int_konz_beoszt', null );
     $int_konz_tel = posted( 'int_konz_tel', null );
-    $int_konz_emial = posted( 'int_konz_emial', null );
+    $int_konz_email = posted( 'int_konz_email', null );
     $cim = posted( 'cim', null );
     $feladat = posted( 'feladat', null );
     $megjegyzes = posted( 'megjegyzes', null );
+    $int_ig_nev = posted( 'int_ig_nev', null );
+    $int_ig_beoszt = posted( 'int_ig_beoszt', null );
+    $int_ig_tel = posted( 'int_ig_tel', null );
+    $int_ig_email = posted( 'int_ig_email', null );
+    $eleje = posted( 'eleje', null );
+    $vege = posted( 'vege', null );
+    $bsc = posted( 'bsc', 0 );
     $conn = new mysqli( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
     if( ! $conn ) {
         return false;
     }
     $conn->set_charset( 'utf8' );
-    $insert = <<<QUERY
+    if( $id ) {
+        $update = <<<QUERY
+UPDATE jelentkezesi_lap
+   SET allando_cim = ?,
+       ideiglenes_cim = ?,
+       mobil = ?,
+       kollegium = ?,
+       int_nev = ?,
+       int_cim = ?,
+       int_konz_nev = ?,
+       int_konz_beoszt = ?,
+       int_konz_tel = ?,
+       int_konz_email = ?,
+       cim = ?,
+       feladat = ?,
+       megjegyzes = ?,
+       int_ig_nev = ?,
+       int_ig_beoszt = ?,
+       int_ig_tel = ?,
+       int_ig_email = ?,
+       eleje = ?,
+       vege = ?,
+       bsc = ?
+ WHERE id = ?
+QUERY;
+        $stmt = $conn->prepare( $update );
+        $stmt->bind_param( 'sssisssssssssssssssii',
+            $allando_cim, $ideiglenes_cim, $mobil, $kollegium, $int_nev, $int_cim,
+            $int_konz_nev, $int_konz_beoszt, $int_konz_tel, $int_konz_email,
+            $cim, $feladat, $megjegyzes, $int_ig_nev, $int_ig_beoszt, $int_ig_tel,
+            $int_ig_email, $eleje, $vege, $bsc, $id );
+    }
+    else {
+        $insert = <<<QUERY
 INSERT INTO jelentkezesi_lap (
             nev,
             neptunkod,
+            omazonosito,
             jelszo,
             email,
             allando_cim,
@@ -242,58 +316,36 @@ INSERT INTO jelentkezesi_lap (
             int_konz_nev,
             int_konz_beoszt,
             int_konz_tel,
-            int_konz_emial,
+            int_konz_email,
             cim,
             feladat,
-            megjegyzes)
-     VALUES (?, UPPER(?), PASSWORD(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            megjegyzes,
+            int_ig_nev,
+            int_ig_beoszt,
+            int_ig_tel,
+            int_ig_email,
+            eleje,
+            vege,
+            bsc)
+     VALUES (
+        ?, UPPER(?), ?, PASSWORD(?), ?,
+        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 QUERY;
-    $update = <<<QUERY
-UPDATE jelentkezesi_lap
-   SET allando_cim = ?,
-       ideiglenes_cim = ?,
-       mobil = ?,
-       kollegium = ?,
-       int_nev = ?,
-       int_cim = ?,
-       int_konz_nev = ?,
-       int_konz_beoszt = ?,
-       int_konz_tel = ?,
-       int_konz_emial = ?,
-       cim = ?,
-       feladat = ?,
-       megjegyzes = ?
- WHERE id = ?
-QUERY;
-    if( $id ) {
-        $stmt = $conn->prepare( $update );
-    }
-    else {
         $stmt = $conn->prepare( $insert );
-        $stmt->bind_param( 's', $nev );
-        $stmt->bind_param( 's', $neptunkod );
-        $stmt->bind_param( 's', $jelszo );
-        $stmt->bind_param( 's', $email );
-    }
-    $stmt->bind_param( 's', $allando_cim );
-    $stmt->bind_param( 's', $ideiglenes_cim );
-    $stmt->bind_param( 's', $mobil );
-    $stmt->bind_param( 'i', $kollegium );
-    $stmt->bind_param( 's', $int_nev );
-    $stmt->bind_param( 's', $int_cim );
-    $stmt->bind_param( 's', $int_konz_nev );
-    $stmt->bind_param( 's', $int_konz_beoszt );
-    $stmt->bind_param( 's', $int_konz_tel );
-    $stmt->bind_param( 's', $int_konz_emial );
-    $stmt->bind_param( 's', $cim );
-    $stmt->bind_param( 's', $feladat );
-    $stmt->bind_param( 's', $megjegyzes );
-    if( $id ) {
-        $stmt->bind_param( 'i', $id );
+        $stmt->bind_param( 'ssssssssisssssssssssssssi',
+            $nev, $neptunkod, $omazonosito, $jelszo, $email,
+            $allando_cim, $ideiglenes_cim, $mobil, $kollegium, $int_nev, $int_cim,
+            $int_konz_nev, $int_konz_beoszt, $int_konz_tel, $int_konz_email,
+            $cim, $feladat, $megjegyzes, $int_ig_nev, $int_ig_beoszt, $int_ig_tel,
+            $int_ig_email, $eleje, $vege, $bsc );
     }
     $result = $stmt->execute();
-    $stmt->close();
-    $conn->close();
+    if( ! $result ) {
+        echo $stmt->error;
+    }
+    @$stmt->close();
+    @$conn->close();
     return $result;
 }
 

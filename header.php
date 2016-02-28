@@ -2,7 +2,7 @@
 
 require_once 'config.php';
 
-$prefix = isset($_SERVER['REQUEST_URI']) && ( strpos($_SERVER['REQUEST_URI'], '/koordinator/') != false )
+$prefix = isset( $_SERVER['REQUEST_URI'] ) && ( strpos( $_SERVER['REQUEST_URI'], '/koordinator/' ) !== false )
     ? '..'
     : '.';
 
