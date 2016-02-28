@@ -68,11 +68,13 @@ function isPrefix( $phone, $prefix ) {
 }
 
 function concatPhone( $def, $pre, $post ) {
-	if( $def != '' )
-		return $def;
-	if( strlen($pre) == 2 && strlen($post) == 7 )
-		return "+36$pre$post";
-	return '';
+	if( ! empty( $def ) ) {
+        return $def;
+    }
+	if( strlen($pre) == 2 && strlen($post) == 7 ) {
+        return "+36$pre$post";
+    }
+	return null;
 }
 
 function trimPhone( $phone ) {
