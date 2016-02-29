@@ -1,4 +1,4 @@
-﻿<?
+﻿<?php
 
 require_once "config.php";
 
@@ -169,7 +169,7 @@ QUERY;
     return _read( $select );
 }
 
-function jelentkezesi_read() {
+function jelentkezesi_read( $id, $neptunkod, $jelszo ) {
     $conn = new mysqli( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
     if( ! $conn ) {
         return false;
@@ -205,14 +205,15 @@ SELECT id,
        feladat,
        megjegyzes,
        eleje,
-       vege,
-       CASE jelszo WHEN PASSWORD(?) THEN 1 ELSE 0 END password
+       vege
   FROM jelentkezesi_lap
- WHERE neptunkod = UPPER(?)
+ WHERE (id = ?)
+    OR (neptunkod = UPPER(?) AND jelszo = PASSWORD(?))
 QUERY;
     $stmt = $conn->prepare( $select );
-    $stmt->bind_param( 's', posted( 'jelszo', null ) );
-    $stmt->bind_param( 's', posted( 'neptunkod', null ) );
+    $stmt->bind_param( 'i', $id );
+    $stmt->bind_param( 's', $neptunkod );
+    $stmt->bind_param( 's', $jelszo );
     if( ! $stmt->execute() ) {
         @$stmt->close();
         @$conn->close();
@@ -362,16 +363,30 @@ QUERY;
     return $result;
 }
 
-function hallgato_mail() {
+function hallgato_mail( $nev, $email, $neptunkod, $jelszo ) {
     $subject = 'Jelentkezés szakmai gyakorlatra';
     $body  = <<<MAIL
-Kedves $_POST[nev]!
+Kedves $nev!
 
 Ön sikeresen jelentkezett szakmai gyakorlatra. A megadott adatokat, a tájékoztatóban megadott határidőig,
-a megadott Neptun-kóddal ($_POST[neptunkod]) és a következő jelszó segítségével tudja módosítani: $_POST[jelszo].
+a megadott Neptun-kóddal ($neptunkod) és a következő jelszó segítségével tudja módosítani: $jelszo.
 
 ---
 Erre az e-mailre ne válaszoljon!
 MAIL;
-    return smartmail( $_POST['nev'], $_POST['email'], $subject, $body );
+    return smartmail( $nev, $email, $subject, $body );
+}
+
+function jovahagyas_mail( $nev, $email ) {
+    $subject = 'Szakmai gyakorlat feladat jóváhagyás';
+    $body  = <<<MAIL
+Kedves $nev!
+
+A szakmai gyakorlat tanszéki felelőse jóváhagyta a szakmai gyakorlata során elvégzendő feladatát.
+A további teendőkről a "Tájékoztató a szakmai gyakorlatról (BSc képzés)" hirdetményben tud tájékozódni.
+
+---
+Erre az e-mailre ne válaszoljon!
+MAIL;
+    return smartmail( $nev, $email, $subject, $body );
 }

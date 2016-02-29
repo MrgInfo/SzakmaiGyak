@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="75a43003-5ff7-4565-9ef2-f597b6e7c045" name="nikipi" url="http://nikipi.gotdns.org/">
+        <fileTransfer host="nikipi.gotdns.org" port="22" rootFolder="/home/pi" accessType="SFTP" password="dfe2dfc3dfc6dfc7dfc6dfc5dfc2df84df9b" username="pi">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

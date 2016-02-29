@@ -1,4 +1,4 @@
-﻿<?
+﻿<?php
 
 define( 'EXEC_DIR',    '/usr/bin' );
 define( 'DB_HOST',     'nikipi.gotdns.org' );

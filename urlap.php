@@ -8,6 +8,11 @@ require 'header.php';
 <header>
     <h1><?= GYAKORLAT_EV ?>. évi szakmai gyakorlat</h1>
 </header>
+<div>
+<?php
+    var_dump( $_POST );
+?>
+</div>
 <div class="content">
     <h2>Jelentkezési lap</h2>
 <?php

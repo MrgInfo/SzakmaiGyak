@@ -1,6 +1,11 @@
 ﻿<?php
 
-include '../header.php';
+require_once 'config.php';
+require_once 'functions.php';
+
+$title = "Feladatkiírás";
+$done = false;
+
 if( !$_POST['modositas'] ) {
 	$done = false;
 	if( $conn = connect() ) {
@@ -115,16 +120,6 @@ END;
 		}
 		if( @mysql_query( $update_jel, $conn ) &&
 		    @mysql_query( $update_feladatlap, $conn ) ) {
-			$subject = 'Szakmai gyakorlat feladat jóváhagyás';
-			$body  = <<<END
-Kedves $_POST[nev]!
-
-A szakmai gyakorlat tanszéki felelőse jóváhagyta a szakmai gyakorlata során elvégzendő feladatát.
-A további teendőkről a "Tájékoztató a szakmai gyakorlatról (BSc képzés)" hirdetményben tud tájékozódni.
-
----
-Erre az e-mailre ne válaszoljon! 
-END;
 			if( $_POST[nev] == '' ||
 				$_POST[neptunkod] == '' ||
 				$_POST[allando_cim] == '' ||
@@ -145,7 +140,8 @@ END;
 		</div>
 <?
 				$done = true;
-			} elseif( smartmail( $_POST[nev], $_POST[email], $subject, $body ) ) {
+			}
+            elseif( jovahagyas_mail( $_POST['nev'], $_POST['email'], $subject, $body ) ) {
 ?>
 		<div class="jumbotron">
 			<h2>Feladatkiírás</h2>
