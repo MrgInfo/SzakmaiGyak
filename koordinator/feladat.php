@@ -31,7 +31,7 @@ if (! empty($_POST['szerkesztes'])) {
         require '../uzenet.php';
     }
     else {
-        $errormsg = 'Nem minden kötelező mező van kitöltve!';
+        $missing = true;
         require '../urlap.php';
     }
 }

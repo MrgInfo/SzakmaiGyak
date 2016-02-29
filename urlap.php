@@ -26,7 +26,7 @@ if (! empty($missing)) {
 ?>
     <form action="<?= $_SERVER['PHP_SELF'] ?>" method="post">
         <input type="hidden" name="id" value="<?= posted( 'id' ) ?>">
-        <input type="hidden" name="id" value="<?= posted( 'tan_konz' ) ?>">
+        <input type="hidden" name="tan_konz" value="<?= posted( 'tan_konz' ) ?>">
         <table class="form">
             <tbody>
                 <tr>
@@ -52,10 +52,10 @@ if (! empty($missing)) {
                 </tr>
                 <tr>
                     <td class="form-label">
-                        <label class="control-label label-req" for="fir">Oktatási azonosító:</label>
+                        <label class="control-label label-req" for="omazonosito">Oktatási azonosító:</label>
                     </td>
                     <td>
-                        <input type="text" id="fir" name="fir" value="<?= posted( 'fir' ) ?>" size="11" maxlength="11" <?= ! empty($readonly) ? 'readonly' : '' ?> class="form-control">
+                        <input type="text" id="omazonosito" name="omazonosito" value="<?= posted( 'omazonosito' ) ?>" size="11" maxlength="11" <?= ! empty($readonly) ? 'readonly' : '' ?> class="form-control">
                     </td>
                 </tr>
                 <tr>
@@ -298,7 +298,7 @@ if ($feladatkiiras) {
     <?php
     $selection = false;
     $konzulens = posted('tan_konz', null);
-    $table = konzulens_read();
+    $table = konzulens_read(null);
     foreach ($table as $row) {
         if ($row['id'] == $konzulens || $row['nev'] == KONZULENS) {
             ?>

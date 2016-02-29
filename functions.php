@@ -49,7 +49,7 @@ function check_required() {
 
 function check_mandantory() {
     return
-        ! check_missing()
+        ! check_required()
         &&
         ! empty($_POST['int_nev'])
         &&
@@ -136,13 +136,16 @@ function trimPhone( $phone ) {
 }
 
 function concatAddress( $def, $isz, $var, $kt, $hsz ) {
-	if( ! empty( $def ) ) {
+	if (! empty($def)) {
         return $def;
     }
-	if( ! empty( $isz ) &&
-        ! empty( $var ) &&
-        ! empty( $kt ) &&
-        ! empty( $hsz ) ) {
+	if (! empty($isz)
+        &&
+        ! empty($var)
+        &&
+        ! empty($kt)
+        &&
+        ! empty($hsz)) {
         return trim("$isz $var, $kt $hsz.", '.');
     }
 	return null;
@@ -158,6 +161,7 @@ function _read( $query ) {
     $result = $conn->query( $query );
     if( ! $result ) {
         echo $conn->error;
+        @$conn->close();
         return false;
     }
     $records = array();
@@ -168,8 +172,8 @@ function _read( $query ) {
         }
         $records[] = $record;
     }
-    $result->free();
-    $conn->close();
+    @$result->free();
+    @$conn->close();
     return $records;
 }
 
@@ -214,14 +218,27 @@ QUERY;
     return _read( $select );
 }
 
-function konzulens_read() {
-    $select = <<<QUERY
+function konzulens_read( $id ) {
+    if (empty($id)) {
+        $select = <<<QUERY
   SELECT id,
          nev
     FROM konzulensek
 ORDER BY nev
 QUERY;
-    return _read( $select );
+        return _read($select);
+    }
+    else {
+        $select = <<<QUERY
+  SELECT nev tan_konz_nev,
+         beoszt tan_konz_beoszt,
+         tel tan_konz_tel,
+         email tan_konz_email
+    FROM konzulensek
+   WHERE id = $id
+QUERY;
+        return _read($select);
+    }
 }
 
 function jelentkezesi_read( $id, $neptunkod, $jelszo ) {
@@ -294,7 +311,7 @@ function jelentkezesi_edit() {
     $id = posted( 'id', null );
     $nev = posted( 'nev', null );
     $neptunkod = posted( 'neptunkod', null );
-    $omazonosito = posted( 'fir', null );
+    $omazonosito = posted( 'omazonosito', null );
     $jelszo = posted( 'jelszo', null );
     $email = posted( 'email', null );
     $allando_cim = posted( 'allando_cim', null );
@@ -308,10 +325,6 @@ function jelentkezesi_edit() {
     $int_konz_tel = posted( 'int_konz_tel', null );
     $int_konz_email = posted( 'int_konz_email', null );
     $tan_konz = posted( 'tan_konz', null );
-    $tan_konz_nev = posted( 'tan_konz_nev', null );
-    $tan_konz_beoszt = posted( 'tan_konz_beoszt', null );
-    $tan_konz_tel = posted( 'tan_konz_tel', null );
-    $tan_konz_email = posted( 'tan_konz_email', null );
     $cim = posted( 'cim', null );
     $feladat = posted( 'feladat', null );
     $megjegyzes = posted( 'megjegyzes', null );
@@ -322,6 +335,20 @@ function jelentkezesi_edit() {
     $eleje = posted( 'eleje', null );
     $vege = posted( 'vege', null );
     $bsc = posted( 'bsc', 0 );
+
+    if ($tan_konz) {
+        $db = konzulens_read($tan_konz);
+        $tan_konz_nev = $db[0]['tan_konz_nev'];
+        $tan_konz_beoszt =  $db[0]['tan_konz_beoszt'];
+        $tan_konz_tel = $db[0]['tan_konz_tel'];
+        $tan_konz_email = $db[0]['tan_konz_email'];
+    }
+    else {
+        $tan_konz_nev = null;
+        $tan_konz_beoszt =  null;
+        $tan_konz_tel = null;
+        $tan_konz_email = null;
+    }
     $conn = new mysqli( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
     if( ! $conn ) {
         return false;
