@@ -5,6 +5,7 @@ require_once 'functions.php';
 
 $title = "Jelentkezés";
 $done = false;
+
 load_post();
 $_POST['allando_cim'] = concatAddress(
     posted( 'allando_cim' ),
@@ -30,9 +31,7 @@ $_POST['mobil'] = concatPhone(
     posted( 'mobil_post' ) );
 $_POST['int_konz_tel'] = trimPhone( posted( 'int_konz_tel' ) );
 $_POST['int_ig_tel'] = trimPhone( posted( 'int_konz_tel' ) );
-
 $_POST['jelszo'] = generatePassword();
-var_dump( $_POST );
 
 $jelentkezes = isset( $_POST['jelentkezes'] );
 $szerkesztes = isset( $_POST['szerkesztes'] );
@@ -41,9 +40,9 @@ $feladatkiiras =
     &&
     substr( $_SERVER['REQUEST_URI'], -strlen( '/feladat.php' ) ) == '/feladat.php';
 
-$missing = false;
+$missing = true;
 if( $jelentkezes || $szerkesztes ) {
-    if(
+    $missing =
         posted( 'nev' ) == '' ||
         strlen( posted( 'neptunkod' ) ) != 6 ||
         strlen( posted( 'fir' ) ) != 11 ||
@@ -51,53 +50,36 @@ if( $jelentkezes || $szerkesztes ) {
         posted( 'mobil' ) == '' ||
         posted( 'email'  ) == '' ||
         posted( 'kollegium' ) == '' ||
-        posted( 'kepzes' ) == ''
-    ) {
-        $missing = true;
-    }
+        posted( 'kepzes' ) == '';
 }
 
-if( ! $missing && $szerkesztes ) {
-	if( empty( $_POST['id'] ) ) {
-        if( ! jelentkezesi_read() ) {
-            $meaasge = empty( $_POST['id'] )
-                ? "A hallgató nincs regisztrálva a rendszerben!"
-                : "Hibás Neptun-kód vagy jelszó!";
-            require 'uzenet.php';
-            $done = true;
+if( ! $missing ) {
+    $id = posted('id', null);
+    $nev = posted('nev', null);
+    $email = posted('email', null);
+    $neptunkod = posted('neptunkod', null);
+    $jelszo = posted('jelszo', null);
+    if ($szerkesztes) {
+        if ($id) {
+            if (jelentkezesi_edit()) {
+                $message = "A változtatásokat mentettük!";
+            } else {
+                $message = "A módosítások nem hajthatók végre!";
+            }
+        } elseif (!jelentkezesi_read(null, $neptunkod, $jelszo)) {
+            $meaasge = "Hibás Neptun-kód vagy jelszó!";
         }
-	}
-    else {
-        if( jelentkezesi_edit() ) {
-            $meaasge = "A változtatásokat mentettük!";
-            require 'uzenet.php';
+    } elseif ($jelentkezes) {
+        if (jelentkezesi_edit() && hallgato_mail( $nev, $email, $neptunkod, $jelszo)) {
+            $message = "A szakmai gyakorlatra való jelentkezés sikeresen megtörtént, erről e-mail értesítést is küldtünk a <a href=\"mailto:$email\">$email</a> címre.";
         } else {
-            $meaasge = "A módosítások nem hajthatók végre!";
-            require 'uzenet.php';
+            jelentkezesi_delete();
+            $message = "A jelentkezés sikertelen, próbálja meg később!";
         }
-        $done = true;
-	}
-}
-else if( ! $missing && $jelentkezes ) {
-    if( jelentkezesi_edit()
-        &&
-        hallgato_mail()
-    ) {
-        $email = posted( 'email' );
-        $meaasge = "A szakmai gyakorlatra való jelentkezés sikeresen megtörtént, erről e-mail értesítést is küldtünk a <a href=\"mailto:$email\">$email</a> címre.";
-        require 'uzenet.php';
     }
-    else {
-        jelentkezesi_delete();
-        $meaasge = "A jelentkezés sikertelen, próbálja meg később!";
-        require 'uzenet.php';
-    }
-    $done = true;
+    require 'uzenet.php';
 }
-if( ! $done )
-{
-    $readonly = isset( $_POST['szerkesztes'] )
-        ? 'readonly'
-        : '';
+else {
+    $readonly = $szerkesztes ? 'readonly' : '';
     require 'urlap.php';
 }

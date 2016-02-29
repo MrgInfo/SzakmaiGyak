@@ -6,7 +6,6 @@ $fluid = true;
 require '../header.php';
 
 $table = all_read();
-var_dump($table);
 
 if( $table === false ) {
     ?>
@@ -26,7 +25,7 @@ else {
 			<h1><?= GYAKORLAT_EV  ?>. évi szakmai gyakorlat</h1>
 		</header>
 		<div class="content">
-			<form method="post" action="email.php" target="_blank" style="height: 80%">
+			<form method="post" action="email.php" target="_blank">
 				<table data-toggle="table" data-show-columns="true" data-search="true" data-toolbar="#toolbar" data-smart-display="false"
 					   data-page-size="5">
 					<thead>
