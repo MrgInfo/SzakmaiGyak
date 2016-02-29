@@ -18,7 +18,6 @@ function posted( $name, $default = '' ) {
 }
 
 function smartmail( $name, $email, $subject, $body ) {
-    return true;
 	$from = EMAIL_FROM;
 	$headers = <<<END
 MIME-Version: 1.0
