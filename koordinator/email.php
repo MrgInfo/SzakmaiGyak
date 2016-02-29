@@ -1,12 +1,22 @@
-﻿<?
+﻿<?php
+
+require_once '../functions.php';
 
 load_post();
 
 $list = array();
-if( $_POST['h_email'] ) $list = $_POST['email'];
-elseif( $_POST['v_email'] ) $list = $_POST['int_vez_email'];
-elseif( $_POST['kk_email'] ) $list = $_POST['int_konz_email'];
-elseif( $_POST['tk_email'] ) $list = $_POST['k_email'];
+if (! empty($_POST['h_email'])) {
+    $list = $_POST['email'];
+}
+elseif (! empty($_POST['kk_email'])) {
+    $list = $_POST['int_konz_email'];
+}
+elseif (! empty($_POST['ig_email'])) {
+    $list = $_POST['int_ig_email'];
+}
+elseif (! empty($_POST['tk_email'])) {
+    $list = $_POST['tan_konz_email'];
+}
 
 $email_list = '';
 foreach( array_unique( $list ) as $email ) {

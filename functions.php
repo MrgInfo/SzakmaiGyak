@@ -11,10 +11,65 @@ function load_post() {
 	}
 }
 
+function load_get() {
+    if( empty( $_GET ) ) {
+        $_GET = array();
+        $_GET = filter_input(INPUT_GET, "id");
+    }
+}
+
 function posted( $name, $default = '' ) {
     return isset( $_POST[$name] )
         ? $_POST[$name]
         : $default;
+}
+
+function check_required() {
+    return
+        ! empty($_POST['nev'])
+        &&
+        ! empty($_POST['neptunkod'])
+        &&
+        strlen($_POST['neptunkod']) == 6
+        &&
+        ! empty($_POST['omazonosito'])
+        &&
+        strlen($_POST['omazonosito']) == 11
+        &&
+        ! empty($_POST['allando_cim'])
+        &&
+        ! empty($_POST['mobil'])
+        &&
+        ! empty($_POST['email'])
+        &&
+        ! empty($_POST['kepzes'])
+        &&
+        ! empty($_POST['kollegium']);
+}
+
+function check_mandantory() {
+    return
+        ! check_missing()
+        &&
+        ! empty($_POST['int_nev'])
+        &&
+        ! empty($_POST['int_cim'])
+        &&
+        ! empty($_POST['int_konz_nev'])
+        &&
+        ! empty($_POST['int_konz_emial'])
+        &&
+        ! empty($_POST['int_ig_nev'])
+        &&
+        ! empty($_POST['int_ig_emial'])
+        &&
+        ! empty($_POST['tan_konz'])
+        &&
+        ! empty($_POST['eleje'])
+        &&
+        ! empty($_POST['vege'])
+        &&
+        ! empty($_POST['feladat']);
 }
 
 function smartmail( $name, $email, $subject, $body ) {
@@ -211,9 +266,7 @@ SELECT id,
     OR (neptunkod = UPPER(?) AND jelszo = PASSWORD(?))
 QUERY;
     $stmt = $conn->prepare( $select );
-    $stmt->bind_param( 'i', $id );
-    $stmt->bind_param( 's', $neptunkod );
-    $stmt->bind_param( 's', $jelszo );
+    $stmt->bind_param( 'iss', $id, $neptunkod, $jelszo );
     if( ! $stmt->execute() ) {
         @$stmt->close();
         @$conn->close();

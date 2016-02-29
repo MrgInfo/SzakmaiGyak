@@ -14,13 +14,13 @@ require 'header.php';
 ?>
 </div>
 <div class="content">
-    <h2>Jelentkezési lap</h2>
+    <h2><?= $title ?></h2>
 <?php
-if( $missing ) {
+if (! empty($missing)) {
     ?>
-        <div class="alert alert-danger" role="alert">
-            <p>Nem minden kötelező mező van kitöltve!</p>
-        </div>
+    <div class="alert alert-danger" role="alert">
+        <p>Nem minden kötelező mező van kitöltve!</p>
+    </div>
     <?php
 }
 ?>
@@ -39,7 +39,7 @@ if( $missing ) {
                         <label class="control-label label-req" for="nev">Név:</label>
                     </td>
                     <td>
-                        <input type="text" id="nev" name="nev" value="<?= posted( 'nev' ) ?>" size="60" maxlength="40" <?= $readonly ?> class="form-control">
+                        <input type="text" id="nev" name="nev" value="<?= posted( 'nev' ) ?>" size="60" maxlength="40" <?= ! empty($readonly) ? 'readonly' : '' ?> class="form-control">
                     </td>
                 </tr>
                 <tr>
@@ -47,7 +47,7 @@ if( $missing ) {
                         <label class="control-label label-req" for="neptunkod">Neptun-kód:</label>
                     </td>
                     <td>
-                        <input type="text" id="neptunkod" name="neptunkod" value="<?= posted( 'neptunkod' ) ?>" size="6" maxlength="6" <?= $readonly ?> class="form-control">
+                        <input type="text" id="neptunkod" name="neptunkod" value="<?= posted( 'neptunkod' ) ?>" size="6" maxlength="6" <?= ! empty($readonly) ? 'readonly' : '' ?> class="form-control">
                     </td>
                 </tr>
                 <tr>
@@ -55,7 +55,7 @@ if( $missing ) {
                         <label class="control-label label-req" for="fir">Oktatási azonosító:</label>
                     </td>
                     <td>
-                        <input type="text" id="fir" name="fir" value="<?= posted( 'fir' ) ?>" size="11" maxlength="11" <?= $readonly ?> class="form-control">
+                        <input type="text" id="fir" name="fir" value="<?= posted( 'fir' ) ?>" size="11" maxlength="11" <?= ! empty($readonly) ? 'readonly' : '' ?> class="form-control">
                     </td>
                 </tr>
                 <tr>
@@ -64,11 +64,12 @@ if( $missing ) {
                     </td>
                     <td>
 <?php
-if( posted( 'allando_cim' ) ) {
+if (posted('allando_cim')) {
     ?>
                         <input type="text" id="allando_cim" name="allando_cim" value="<?= posted( 'allando_cim' ) ?>" size="60" maxlength="50" class="form-control">
     <?php
-} else {
+}
+else {
     ?>
                         <div class="controls form-inline">
                             <input type="text" id="allando_cim" name="allando_cim_isz" size="4" maxlength="4" placeholder="ir.sz." class="form-control">
@@ -87,11 +88,12 @@ if( posted( 'allando_cim' ) ) {
                     </td>
                     <td>
 <?php
-if( posted( 'ideiglenes_cim' ) ) {
+if (posted('ideiglenes_cim')) {
     ?>
                         <input type="text" id="ideiglenes_cim" name="ideiglenes_cim" value="<?= posted( 'ideiglenes_cim' ) ?>" size="60" maxlength="50">
     <?php
-} else {
+}
+else {
     ?>
                         <div class="controls form-inline">
                             <input type="text" id="ideiglenes_cim" name="ideiglenes_cim_isz" size="4" maxlength="4" placeholder="ir.sz." class="form-control">
@@ -111,7 +113,7 @@ if( posted( 'ideiglenes_cim' ) ) {
                     <td>
                         <div class="controls form-inline">
 <?php
-if( posted( 'mobil' ) ) {
+if (posted('mobil')) {
     ?>
                             <input type="text" id="mobil" name="mobil" value="<?= posted( 'mobil' ) ?>" size="15" maxlength="20" class="form-control">
     <?php
@@ -136,7 +138,7 @@ else {
                         <label class="control-label label-req" for="email">E-mail cím:</label>
                     </td>
                     <td>
-                        <input type="email" id="email" name="email" value="<?= posted( 'email' ) ?>" size="60" maxlength="30" <?= $readonly ?> class="form-control">
+                        <input type="email" id="email" name="email" value="<?= posted( 'email' ) ?>" size="60" maxlength="30" <?=  ! empty($readonly) ? 'readonly' : '' ?> class="form-control">
                     </td>
                 </tr>
                 <tr>
@@ -190,11 +192,12 @@ else {
                     <td class="form-label"><label class="control-label label-mand" for="int_cim">Címe*:</label></td>
                     <td>
 <?php
-if( posted( 'int_cim' ) ) {
+if (posted('int_cim')) {
     ?>
                         <input type="text" id="int_cim" name="int_cim" value="<?= posted( 'int_cim' ) ?>" size="60" maxlength="50" class="form-control">
     <?php
-} else {
+}
+else {
     ?>
                         <div class="controls form-inline">
                             <input type="text" id="int_cim" name="int_cim_isz" size="4" maxlength="4" placeholder="ir.sz." class="form-control">
@@ -236,10 +239,10 @@ if( posted( 'int_cim' ) ) {
                 </tr>
                 <tr>
                     <td class="form-label">
-                        <label class="control-label label-mand" for="int_konz_emial">E-mail címe*:</label>
+                        <label class="control-label label-mand" for="int_konz_email">E-mail címe*:</label>
                     </td>
                     <td>
-                        <input type="email" id="int_konz_emial" name="int_konz_emial" value="<?= posted( 'int_konz_emial' ) ?>" size="60" maxlength="30" class="form-control">
+                        <input type="email" id="int_konz_email" name="int_konz_email" value="<?= posted( 'int_konz_email' ) ?>" size="60" maxlength="30" class="form-control">
                     </td>
                 </tr>
                 <tr>
@@ -273,14 +276,14 @@ if( posted( 'int_cim' ) ) {
                 </tr>
                 <tr>
                     <td class="form-label">
-                        <label class="control-label label-mand" for="int_ig_emial">E-mail címe*:</label>
+                        <label class="control-label label-mand" for="int_ig_email">E-mail címe*:</label>
                     </td>
                     <td>
-                        <input type="email" id="int_ig_emial" name="int_ig_emial" value="<?= posted( 'int_ig_emial' ) ?>" size="60" maxlength="30" class="form-control">
+                        <input type="email" id="int_ig_email" name="int_ig_email" value="<?= posted( 'int_ig_email' ) ?>" size="60" maxlength="30" class="form-control">
                     </td>
                 </tr>
 <?php
-if( $feladatkiiras ) {
+if ($feladatkiiras) {
     ?>
                 <tr>
                     <td class="sep" colspan="2"><label>Tanszéki konzulens</label></td>
@@ -297,15 +300,13 @@ if( $feladatkiiras ) {
     $konzulens = posted('tan_konz', null);
     $table = konzulens_read();
     foreach ($table as $row) {
-        if ($row['id'] == $konzulens
-            ||
-            $row['nev'] == KONZULENS
-        ) {
+        if ($row['id'] == $konzulens || $row['nev'] == KONZULENS) {
             ?>
                                 <option value="<?= $row['id'] ?>" selected><?= $row['nev'] ?></option>
             <?php
             $selection = true;
-        } else {
+        }
+        else {
             ?>
                                 <option value="<?= $row['id'] ?>"><?= $row['nev'] ?></option>
             <?php
@@ -337,7 +338,7 @@ if( $feladatkiiras ) {
                         <label class="control-label label-mand" for="eleje">Kezdete*:</label>
                     </td>
                     <td>
-                        <input type="date" id="eleje" name="elje" value="<?= posted( 'eleje' ) ?>" class="form-control">
+                        <input type="date" id="eleje" name="eleje" value="<?= posted( 'eleje' ) ?>" class="form-control">
                     </td>
                 </tr>
                 <tr>
@@ -368,11 +369,12 @@ if( $feladatkiiras ) {
                     <td colspan="2">
                         <div class="btn-group" role="group">
 <?php
-if( $szerkesztes ) {
+if ($szerkesztes) {
     ?>
                             <input type="submit" name="szerkesztes" value="Módosítás" class="btn btn-primary">
     <?php
-} else {
+}
+else {
     ?>
                             <input type="submit" name="jelentkezes"  value="Jelentkezés" class="btn btn-primary">
     <?php
