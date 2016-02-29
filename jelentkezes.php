@@ -3,6 +3,7 @@
 require_once 'config.php';
 require_once 'functions.php';
 
+$title = "Jelentkezés";
 $done = false;
 load_post();
 $_POST['allando_cim'] = concatAddress(
@@ -59,56 +60,37 @@ if( $jelentkezes || $szerkesztes ) {
 if( ! $missing && $szerkesztes ) {
 	if( empty( $_POST['id'] ) ) {
         if( ! jelentkezesi_read() ) {
-            ?>
-<div class="jumbotron">
-    <h2>Jelentkezés</h2>
-    <p><?= empty( $_POST['id'] ) ? 'A hallgató nincs regisztrálva a rendszerben!' : 'Hibás Neptun-kód vagy jelszó!' ?></p>
-    <p><a href="index.php" class="btn btn-default" role="button">Vissza</a></p>
-</div>
-            <?php
+            $meaasge = empty( $_POST['id'] )
+                ? "A hallgató nincs regisztrálva a rendszerben!"
+                : "Hibás Neptun-kód vagy jelszó!";
+            require 'uzenet.php';
             $done = true;
         }
-	} else {
+	}
+    else {
         if( jelentkezesi_edit() ) {
-            ?>
-<div class="jumbotron">
-    <h2>Jelentkezés</h2>
-    <p>A változtatásokat mentettük!<p>
-    <p><a href="index.php" class="btn btn-default" role="button">Vissza</a></p>
-</div>
-            <?php
+            $meaasge = "A változtatásokat mentettük!";
+            require 'uzenet.php';
         } else {
-            ?>
-<div class="jumbotron">
-    <h2>Jelentkezés</h2>
-    <p>A módosítások nem hajthatók végre!<p>
-    <p><a href="index.php" class="btn btn-default" role="button">Vissza</a></p>
-</div>
-            <?php
+            $meaasge = "A módosítások nem hajthatók végre!";
+            require 'uzenet.php';
         }
         $done = true;
 	}
-} else if( ! $missing && $jelentkezes ) {
+}
+else if( ! $missing && $jelentkezes ) {
     if( jelentkezesi_edit()
         &&
         hallgato_mail()
     ) {
-        ?>
-<div class="jumbotron">
-    <h2>Jelentkezés</h2>
-    <p>A szakmai gyakorlatra való jelentkezés siekresen megtörtént, erről e-mail értesítést is küldtünk a <a href="mailto:<?= posted( 'email' ) ?>"><?= posted( 'email' ) ?></a> címre.<p>
-    <p><a href="index.php" class="btn btn-default" role="button">Vissza</a></p>
-</div>
-        <?php
-    } else {
+        $email = posted( 'email' );
+        $meaasge = "A szakmai gyakorlatra való jelentkezés sikeresen megtörtént, erről e-mail értesítést is küldtünk a <a href=\"mailto:$email\">$email</a> címre.";
+        require 'uzenet.php';
+    }
+    else {
         jelentkezesi_delete();
-        ?>
-<div class="jumbotron">
-    <h2>Jelentkezés</h2>
-    <p>A jelentkezés sikertelen, próbálja meg később!<p>
-    <p><a href="index.php" class="btn btn-default" role="button">Vissza</a></p>
-</div>
-        <?php
+        $meaasge = "A jelentkezés sikertelen, próbálja meg később!";
+        require 'uzenet.php';
     }
     $done = true;
 }

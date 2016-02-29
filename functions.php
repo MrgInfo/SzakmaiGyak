@@ -254,6 +254,11 @@ function jelentkezesi_edit() {
     $int_konz_beoszt = posted( 'int_konz_beoszt', null );
     $int_konz_tel = posted( 'int_konz_tel', null );
     $int_konz_email = posted( 'int_konz_email', null );
+    $tan_konz = posted( 'tan_konz', null );
+    $tan_konz_nev = posted( 'tan_konz_nev', null );
+    $tan_konz_beoszt = posted( 'tan_konz_beoszt', null );
+    $tan_konz_tel = posted( 'tan_konz_tel', null );
+    $tan_konz_email = posted( 'tan_konz_email', null );
     $cim = posted( 'cim', null );
     $feladat = posted( 'feladat', null );
     $megjegyzes = posted( 'megjegyzes', null );
@@ -282,6 +287,11 @@ UPDATE jelentkezesi_lap
        int_konz_beoszt = ?,
        int_konz_tel = ?,
        int_konz_email = ?,
+       tan_konz = ?,
+       tan_konz_nev = ?,
+       tan_konz_beoszt = ?,
+       tan_konz_tel = ?,
+       tan_konz_email = ?,
        cim = ?,
        feladat = ?,
        megjegyzes = ?,
@@ -291,13 +301,15 @@ UPDATE jelentkezesi_lap
        int_ig_email = ?,
        eleje = ?,
        vege = ?,
-       bsc = ?
+       bsc = ?,
+       modositas = now()
  WHERE id = ?
 QUERY;
         $stmt = $conn->prepare( $update );
-        $stmt->bind_param( 'sssisssssssssssssssii',
+        $stmt->bind_param( 'sssissssssisssssssssssssii',
             $allando_cim, $ideiglenes_cim, $mobil, $kollegium, $int_nev, $int_cim,
             $int_konz_nev, $int_konz_beoszt, $int_konz_tel, $int_konz_email,
+            $tan_konz, $tan_konz_nev, $tan_konz_beoszt, $tan_konz_tel, $tan_konz_email,
             $cim, $feladat, $megjegyzes, $int_ig_nev, $int_ig_beoszt, $int_ig_tel,
             $int_ig_email, $eleje, $vege, $bsc, $id );
     }
