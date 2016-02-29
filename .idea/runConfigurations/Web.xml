@@ -1,5 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Web" type="PhpBuiltInWebServerConfigurationType" factoryName="PHP Built-in Web Server" activateToolWindowBeforeRun="false" singleton="true" document_root="$PROJECT_DIR$" port="8080" router_script="$PROJECT_DIR$/jelentkezes.php">
-    <method />
-  </configuration>
-</component>
