@@ -42,14 +42,14 @@ function check_required() {
         &&
         ! empty($_POST['email'])
         &&
-        ! empty($_POST['kepzes'])
+        isset($_POST['bsc'])
         &&
-        ! empty($_POST['kollegium']);
+        isset($_POST['kollegium']);
 }
 
 function check_mandantory() {
     return
-        ! check_required()
+        check_required()
         &&
         ! empty($_POST['int_nev'])
         &&
@@ -63,7 +63,7 @@ function check_mandantory() {
         &&
         ! empty($_POST['int_ig_emial'])
         &&
-        ! empty($_POST['tan_konz'])
+        isset($_POST['tan_konz'])
         &&
         ! empty($_POST['eleje'])
         &&
@@ -115,10 +115,10 @@ function removePrefix( $phone ) {
 }
 
 function isPrefix( $phone, $prefix ) {
-	if( substr( $phone, 3, 2 ) == $prefix )
-		return 'selected=selected';
-	else
-		return '';
+	if( substr( $phone, 3, 2 ) == $prefix ) {
+        return 'selected=selected';
+    }
+    return '';
 }
 
 function concatPhone( $def, $pre, $post ) {
@@ -139,14 +139,9 @@ function concatAddress( $def, $isz, $var, $kt, $hsz ) {
 	if (! empty($def)) {
         return $def;
     }
-	if (! empty($isz)
-        &&
-        ! empty($var)
-        &&
-        ! empty($kt)
-        &&
-        ! empty($hsz)) {
-        return trim("$isz $var, $kt $hsz.", '.');
+	if (! empty($isz) && ! empty($var) && ! empty($kt) && ! empty($hsz)) {
+        $hsz = trim($hsz, '.');
+        return "$isz $var, $kt $hsz.";
     }
 	return null;
 }
@@ -166,7 +161,7 @@ function _read( $query ) {
     }
     $records = array();
     while( $row = $result->fetch_assoc() ) {
-        $record =  array();
+        $record = array();
         foreach( $row as $key => $value ) {
             $record[$key] = $value;
         }
@@ -226,7 +221,8 @@ function konzulens_read( $id ) {
     FROM konzulensek
 ORDER BY nev
 QUERY;
-        return _read($select);
+        $table = _read($select);
+        return $table;
     }
     else {
         $select = <<<QUERY
@@ -237,7 +233,8 @@ QUERY;
     FROM konzulensek
    WHERE id = $id
 QUERY;
-        return _read($select);
+        $table = _read($select);
+        return $table[0];
     }
 }
 
@@ -304,7 +301,61 @@ QUERY;
     return true;
 }
 
-function jelentkezesi_delete() {
+
+function jelentkezesi_read_beautiful() {
+    $select = <<<QUERY
+   SELECT nev "Hallgató",
+          neptunkod "Neptun-kód",
+          neptunkod "Oktatási azonosító",
+          allando_cim "Állandó lakcím",
+          ideiglenes_cim "Értesítési cím",
+          mobil "Mobiltelefon",
+          email "E-mail",
+          int_nev "Intézmény neve",
+          int_cim "Intézmény címe",
+          cim "Feladat címe",
+          feladat "Feladat részletezése",
+          eleje "Gyakorlat kezdete",
+          eleje "Gyakorlat vége",
+          int_konz_nev "Külső konzulens",
+          int_konz_beoszt "K.k. beosztása",
+          int_konz_tel "K.k. telefonszáma",
+          int_konz_email "K.k. e-mail címe",
+          int_ig_nev "Igazoló",
+          int_ig_beoszt "I. beosztása",
+          int_ig_tel "I. telefonszáma",
+          int_ig_email = "I. e-mail címe",
+          tan_konz_nev "Tanszéki konzulens",
+          tan_konz_beoszt "T.k. beosztása",
+          tan_konz_tel "T.k. telefonszáma",
+          tan_konz_email "T.k. e-mail címe",
+          CASE kollegium WHEN 1 THEN 'Van' ELSE 'Nincs' END "Kollégiumi igény",
+          CASE bsc WHEN 1 THEN 'BSc' ELSE 'MSc' END "Képzés",
+          megjegyzes "Megjegyzés",
+          jelentkezes "Jelentkezés ideje",
+          modositas "Utolsó módosítás"
+     FROM jelentkezesi_lap
+ ORDER BY nev
+QUERY;
+    return _read( $select );
+}
+
+function jelentkezesi_delete( $id ) {
+    $conn = new mysqli( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
+    if( ! $conn ) {
+        return false;
+    }
+    $conn->set_charset( 'utf8' );
+    $delete = <<<COMMNAD
+DELETE FROM jelentkezesi_lap
+      WHERE id = ?
+COMMNAD;
+    $stmt = $conn->prepare( $delete );
+    $stmt->bind_param( 'i', $id );
+    $result = $stmt->execute();
+    @$stmt->close();
+    @$conn->close();
+    return $result;
 }
 
 function jelentkezesi_edit() {
@@ -318,6 +369,7 @@ function jelentkezesi_edit() {
     $ideiglenes_cim = posted( 'ideiglenes_cim', null );
     $mobil = posted( 'mobil', null );
     $kollegium = posted( 'kollegium', 0 );
+    $bsc = posted( 'bsc', 0 );
     $int_nev = posted( 'int_nev', null );
     $int_cim = posted( 'int_cim', null );
     $int_konz_nev = posted( 'int_konz_nev', null );
@@ -334,14 +386,12 @@ function jelentkezesi_edit() {
     $int_ig_email = posted( 'int_ig_email', null );
     $eleje = posted( 'eleje', null );
     $vege = posted( 'vege', null );
-    $bsc = posted( 'bsc', 0 );
-
     if ($tan_konz) {
         $db = konzulens_read($tan_konz);
-        $tan_konz_nev = $db[0]['tan_konz_nev'];
-        $tan_konz_beoszt =  $db[0]['tan_konz_beoszt'];
-        $tan_konz_tel = $db[0]['tan_konz_tel'];
-        $tan_konz_email = $db[0]['tan_konz_email'];
+        $tan_konz_nev = $db['tan_konz_nev'];
+        $tan_konz_beoszt =  $db['tan_konz_beoszt'];
+        $tan_konz_tel = $db['tan_konz_tel'];
+        $tan_konz_email = $db['tan_konz_email'];
     }
     else {
         $tan_konz_nev = null;
@@ -457,13 +507,13 @@ MAIL;
     return smartmail( $nev, $email, $subject, $body );
 }
 
-function jovahagyas_mail( $nev, $email ) {
+function jovahagyas_mail( $nev, $email, $konzulens ) {
     $subject = 'Szakmai gyakorlat feladat jóváhagyás';
     $body  = <<<MAIL
 Kedves $nev!
 
-A szakmai gyakorlat tanszéki felelőse jóváhagyta a szakmai gyakorlata során elvégzendő feladatát.
-A további teendőkről a "Tájékoztató a szakmai gyakorlatról (BSc képzés)" hirdetményben tud tájékozódni.
+A szakmai gyakorlat tanszéki felelőse jóváhagyta a szakmai gyakorlata során elvégzendő feladatát és
+$konzulens-t jelölte ki tanszéki konzulensnek.
 
 ---
 Erre az e-mailre ne válaszoljon!

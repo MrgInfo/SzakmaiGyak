@@ -3,21 +3,23 @@
 require_once '../functions.php';
 
 load_post();
-
-$list = array();
 if (! empty($_POST['h_email'])) {
-    $list = $_POST['email'];
+    $name = 'email';
 }
 elseif (! empty($_POST['kk_email'])) {
-    $list = $_POST['int_konz_email'];
+    $name = 'int_konz_email';
 }
 elseif (! empty($_POST['ig_email'])) {
-    $list = $_POST['int_ig_email'];
+    $name = 'int_ig_email';
 }
 elseif (! empty($_POST['tk_email'])) {
-    $list = $_POST['tan_konz_email'];
+    $name = 'tan_konz_email';
+}
+else {
+    $name = '';
 }
 
+$list = isset($_POST[$name]) ? $_POST[$name] : array();
 $email_list = '';
 foreach( array_unique( $list ) as $email ) {
     if( $email_list ) {

@@ -26,7 +26,6 @@ if (! empty($missing)) {
 ?>
     <form action="<?= $_SERVER['PHP_SELF'] ?>" method="post">
         <input type="hidden" name="id" value="<?= posted( 'id' ) ?>">
-        <input type="hidden" name="tan_konz" value="<?= posted( 'tan_konz' ) ?>">
         <table class="form">
             <tbody>
                 <tr>
@@ -148,12 +147,12 @@ else {
                     <td>
                         <div class="controls form-inline">
                             <div class="radio">
-                                <input type="radio" id="kepzes_bsc" name="kepzes" value="1" <?= posted( 'kepzes', 1 ) == 1 ? 'checked' : '' ?>>
-                                <label for="kepzes_bsc">BsC</label>
+                                <input type="radio" id="bsc" name="bsc" value="1" <?= posted( 'bsc', 1 ) == 1 ? 'checked' : '' ?>>
+                                <label for="bsc">BsC</label>
                             </div>
                             <div class="radio">
-                                <input type="radio" id="kepzes_msc" name="kepzes" value="0" <?= posted( 'kepzes', 1 ) == 0 ? 'checked' : ''  ?>>
-                                <label for="kepzes_msc">MsC</label>
+                                <input type="radio" id="msc" name="bsc" value="0" <?= posted( 'bsc', 1 ) == 0 ? 'checked' : ''  ?>>
+                                <label for="msc">MsC</label>
                             </div>
                         </div>
                     </td>

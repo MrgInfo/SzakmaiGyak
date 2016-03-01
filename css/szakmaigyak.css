@@ -8,8 +8,6 @@ textarea {
 
 .form {
   padding: 10px;
-  border: 2px solid black;
-  border-collapse: collapse;
   width: 100%;
 }
 
@@ -38,7 +36,6 @@ textarea {
 
 td.break, th.break {
   white-space: -moz-pre-wrap;
-  white-space: -pre-wrap;
   white-space: -o-pre-wrap;
   white-space: pre-wrap;
   word-wrap: break-word;
@@ -50,3 +47,8 @@ td.sep {
   border: 2px solid black;
   background: #DDDDDD;
 }
+
+.fixed-table-body {
+    height: 70%;
+}
+
