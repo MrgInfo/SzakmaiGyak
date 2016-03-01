@@ -26,7 +26,7 @@ else {
 
 </script>
 <header>
-    <h1><?= GYAKORLAT_EV  ?>. évi szakmai gyakorlat</h1>
+    <h1><?= GYAKORLAT_EV ?>. évi szakmai gyakorlat</h1>
 </header>
 <form method="post" action="email.php" target="_blank">
     <table data-toggle="table" data-locale="hu-HU" data-classes="table table-striped"
@@ -163,8 +163,8 @@ else {
 </form>
 <div id="toolbar">
     <a href="excel.php" target="_blank" role="button" class="btn btn-default">Excel</a>
-    <a href="excel.php" target="_blank" role="button" class="btn btn-default">Neptun</a>
-    <a href="excel.php" target="_blank" role="button" class="btn btn-default">FRKP-9050</a>
+    <a href="excel.php?type=neptun" target="_blank" role="button" class="btn btn-default">Neptun</a>
+    <a href="excel.php?type=9050" target="_blank" role="button" class="btn btn-default">FRKP-9050</a>
     <a href="setup.php" target="_blank" role="button" class="btn btn-default">Beállítások</a>
 </div>
 	<?php

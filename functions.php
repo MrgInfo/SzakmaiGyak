@@ -306,7 +306,7 @@ function jelentkezesi_read_beautiful() {
     $select = <<<QUERY
    SELECT nev "Hallgató",
           neptunkod "Neptun-kód",
-          neptunkod "Oktatási azonosító",
+          omazonosito "Oktatási azonosító",
           allando_cim "Állandó lakcím",
           ideiglenes_cim "Értesítési cím",
           mobil "Mobiltelefon",
@@ -491,6 +491,46 @@ QUERY;
     @$stmt->close();
     @$conn->close();
     return $result;
+}
+
+function neptun() {
+    $kepzes = GYAKORLAT_KEPZESKOD;
+    $felev = GYAKORLAT_FELEV;
+    $elfogado = ELFOGADO;
+    $elfogado_beoszt = ELFOGADO_BEOSZTASA;
+    $elfogadas = date('Y.m.d. 00:00:00', strtotime(ELFOGADAS));
+    $select = <<<QUERY
+SELECT neptunkod "Hallgató Neptun kódja",
+       '$kepzes' "Képzéskód",
+       '$felev' "Felvétel féléve",
+       CONCAT(omazonosito, '-$felev-$kepzes') "Azonosító",
+       'GEGI' "Szervezeti egység kódja",
+       DATE_FORMAT(eleje, '%Y.%m.%d. 00:00:00') "Kezdődátum",
+       DATE_FORMAT(vege, '%Y.%m.%d. 00:00:00') "Végdátum",
+       FLOOR(DATEDIFF(vege, eleje) / 7) "Időtartam egység száma",
+       'Hét' "Időtartam egysége",
+       int_ig_nev "Igazoló neve",
+       DATE_FORMAT(vege, '%Y.%m.%d. 00:00:00') "Igazolás dátuma",
+       cim "Leírás",
+       '' "Leírás_1",
+       '' "Leírás_2",
+       '' "Leírás_3",
+       '' "Leírás_4",
+       '' "Külső szervezet név",
+       '' "Szerződés kezdete",
+       '' "Szerződés vége",
+       '' "Szerződés száma",
+       '' "Szerződés megszűnésének indoka",
+       '$elfogadas' "Teljesítés elfogadásának időpontja",
+       '$elfogado' "Elfogadó neve",
+       '$elfogado_beoszt' "Elfogadó beosztása",
+       'kötelezően előírt szakmai gyakorlat' "Megnevezés",
+       int_nev "Szakmai gyakorlóhely",
+       tan_konz_nev "Gyakorlatvezető neve"
+  FROM jelentkezesi_lap
+ ORDER BY nev
+QUERY;
+    return _read( $select );
 }
 
 function hallgato_mail( $nev, $email, $neptunkod, $jelszo ) {

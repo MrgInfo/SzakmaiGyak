@@ -299,7 +299,7 @@ if ($feladatkiiras) {
     $konzulens = posted('tan_konz', null);
     $table = konzulens_read(null);
     foreach ($table as $row) {
-        if ($row['id'] == $konzulens || $row['nev'] == KONZULENS) {
+        if ($row['id'] == $konzulens || $row['nev'] == ELFOGADO) {
             ?>
                                 <option value="<?= $row['id'] ?>" selected><?= $row['nev'] ?></option>
             <?php

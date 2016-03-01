@@ -9,7 +9,7 @@ $feladatkiiras = true;
 $szerkesztes = true;
 
 load_post();
-$id =  posted('id') ?: filter_input(INPUT_GET, "id");
+$id =  posted('id') ?: filter_input(INPUT_GET, 'id');
 $szerkesztes = posted('szerkesztes');
 
 if ($szerkesztes) {
@@ -18,11 +18,11 @@ if ($szerkesztes) {
         require '../urlap.php';
     }
     else {
-        $nev =  posted( 'nev' );
-        $email = posted( 'email' );
-        $tan_konz = posted( 'tan_konz' );
+        $nev =  posted('nev');
+        $email = posted('email');
+        $tan_konz = posted('tan_konz');
         $konzulens = '';
-        if(! empty($tan_konz)) {
+        if (! empty($tan_konz)) {
             $db = konzulens_read($tan_konz);
             $konzulens = $db['nev'];
         }

@@ -16,7 +16,17 @@ header( "Content-Type: application/download" );
 header( "Content-Disposition: attachment;filename=".DB_NAME.".csv" );
 header( "Content-Transfer-Encoding: binary" );
 
-$table = jelentkezesi_read_beautiful();
+$type = filter_input(INPUT_GET, 'type');
+if ($type == 'neptun') {
+    $table = neptun();
+}
+elseif ($type == '9050') {
+    $table = null;
+}
+else {
+    $table = jelentkezesi_read_beautiful();
+}
+
 $first = true;
 $df = fopen( "php://output", 'w' );
 foreach ($table as $row) {
@@ -27,4 +37,3 @@ foreach ($table as $row) {
     fputcsv( $df, $row, ';', '"' );
 }
 fclose( $df );
-
