@@ -18,8 +18,14 @@ else {
     'use strict';
 
     function rowStyle(row) {
-        if (row['Feladat részletezése']) {
-            return { classes: 'successe' };
+        if (row[ 1] && row[ 2] && row[ 3] &&
+            row[ 4] && row[ 6] && row[ 7] &&
+            row[ 8] && row[ 9] && row[10] &&
+            row[11] && row[12] && row[15] &&
+            row[16] && row[19] && row[20] &&
+            row[23] && row[26] && row[27] )
+        {
+            return { classes: 'success' };
         }
         return {};
     }
