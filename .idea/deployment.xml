@@ -8,9 +8,11 @@
             <mapping deploy="/szakmaigyak" local="$PROJECT_DIR$" web="/szakmaigyak" />
           </mappings>
           <excludedPaths>
-            <excludedPath local="true" path="$PROJECT_DIR$/9050_szakmai_gyakorlohely_bejelentese_GT3_TT_2016.doc" />
-            <excludedPath local="true" path="$PROJECT_DIR$/szakgyak_hellyel_BSc_1516-1_TT _KG.xlsx" />
-            <excludedPath local="true" path="$PROJECT_DIR$/todo.txt" />
+            <excludedPath local="true" path="$PROJECT_DIR$/.gitattributes" />
+            <excludedPath local="true" path="$PROJECT_DIR$/.gitignore" />
+            <excludedPath local="true" path="$PROJECT_DIR$/README.md" />
+            <excludedPath local="true" path="$PROJECT_DIR$/documentation" />
+            <excludedPath local="true" path="$PROJECT_DIR$/.idea" />
           </excludedPaths>
         </serverdata>
       </paths>

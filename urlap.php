@@ -8,11 +8,6 @@ require 'header.php';
 <header>
     <h1><?= GYAKORLAT_EV ?>. évi szakmai gyakorlat</h1>
 </header>
-<div>
-<?php
-    var_dump( $_POST );
-?>
-</div>
 <div class="content">
     <h2><?= $title ?></h2>
 <?php
@@ -26,7 +21,7 @@ if (! empty($missing)) {
 ?>
     <form action="<?= $_SERVER['PHP_SELF'] ?>" method="post">
         <input type="hidden" name="id" value="<?= posted( 'id' ) ?>">
-        <table class="form">
+        <table class="form border">
             <tbody>
                 <tr>
                     <td class="sep" colspan="2">
@@ -35,7 +30,7 @@ if (! empty($missing)) {
                 </tr>
                 <tr>
                     <td class="form-label">
-                        <label class="control-label label-req" for="nev">Név:</label>
+                        <label class="control-label label-req" for="nev">Név&deg;:</label>
                     </td>
                     <td>
                         <input type="text" id="nev" name="nev" value="<?= posted( 'nev' ) ?>" size="60" maxlength="40" <?= ! empty($readonly) ? 'readonly' : '' ?> class="form-control">
@@ -43,7 +38,7 @@ if (! empty($missing)) {
                 </tr>
                 <tr>
                     <td class="form-label">
-                        <label class="control-label label-req" for="neptunkod">Neptun-kód:</label>
+                        <label class="control-label label-req" for="neptunkod">Neptun-kód&deg;:</label>
                     </td>
                     <td>
                         <input type="text" id="neptunkod" name="neptunkod" value="<?= posted( 'neptunkod' ) ?>" size="6" maxlength="6" <?= ! empty($readonly) ? 'readonly' : '' ?> class="form-control">
@@ -51,7 +46,7 @@ if (! empty($missing)) {
                 </tr>
                 <tr>
                     <td class="form-label">
-                        <label class="control-label label-req" for="omazonosito">Oktatási azonosító:</label>
+                        <label class="control-label label-req" for="omazonosito">Oktatási azonosító&deg;:</label>
                     </td>
                     <td>
                         <input type="text" id="omazonosito" name="omazonosito" value="<?= posted( 'omazonosito' ) ?>" size="11" maxlength="11" <?= ! empty($readonly) ? 'readonly' : '' ?> class="form-control">
@@ -59,7 +54,7 @@ if (! empty($missing)) {
                 </tr>
                 <tr>
                     <td class="form-label">
-                        <label class="control-label label-req" for="allando_cim">Állandó lakóhely címe:</label>
+                        <label class="control-label label-req" for="allando_cim">Állandó lakóhely címe&deg;:</label>
                     </td>
                     <td>
 <?php
@@ -107,7 +102,7 @@ else {
                 </tr>
                 <tr>
                     <td class="form-label">
-                        <label class="control-label label-req" for="mobil">Mobiltelefonszám:</label>
+                        <label class="control-label label-req" for="mobil">Mobiltelefonszám&deg;:</label>
                     </td>
                     <td>
                         <div class="controls form-inline">
@@ -134,7 +129,7 @@ else {
                 </tr>
                 <tr>
                     <td class="form-label">
-                        <label class="control-label label-req" for="email">E-mail cím:</label>
+                        <label class="control-label label-req" for="email">E-mail cím&deg;:</label>
                     </td>
                     <td>
                         <input type="email" id="email" name="email" value="<?= posted( 'email' ) ?>" size="60" maxlength="30" <?=  ! empty($readonly) ? 'readonly' : '' ?> class="form-control">
@@ -142,7 +137,7 @@ else {
                 </tr>
                 <tr>
                     <td class="form-label">
-                        <label class="control-label label-req" for="kepzes">Képzés típusa:</label>
+                        <label class="control-label" for="kepzes">Képzés típusa:</label>
                     </td>
                     <td>
                         <div class="controls form-inline">
@@ -159,7 +154,7 @@ else {
                 </tr>
                 <tr>
                     <td class="form-label">
-                        <label class="control-label label-req" for="kollegium">Gyakorlata alatt igényel-e kollégiumi elhelyezést:</label>
+                        <label class="control-label" for="kollegium">Gyakorlata alatt igényel-e<br>kollégiumi elhelyezést:</label>
                     </td>
                     <td>
                         <div class="controls form-inline">
@@ -388,8 +383,8 @@ else {
     </form>
 </div>
 <footer class="fn">
-    <p class="label-req">Kötelezően töltendő adatok.</p>
-    <p class="label-mand">* A mező kitöltése jelentkezéshez nem, de a feladat jóváhagyásához kötelezően kitöltendő adat!</p>
+    <p class="label-req">&deg; Kötelezően töltendő!</p>
+    <p class="label-mand">* A mező kitöltése jelentkezéshez nem, de a feladat jóváhagyásához kötelezően kitöltendő!</p>
 </footer>
 <?php
 

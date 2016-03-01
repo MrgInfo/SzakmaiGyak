@@ -1,10 +1,10 @@
 ﻿<?php
 
-$_SERVER['REQUEST_URI'] = '/';
-
 require_once 'config.php';
 require_once 'functions.php';
 require 'header.php';
+
+var_dump(admin_mail('Gipsz Jakab', 'WDQBRG'));
 
 ?>
 		<header>

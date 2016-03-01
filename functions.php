@@ -500,33 +500,33 @@ function neptun() {
     $elfogado_beoszt = ELFOGADO_BEOSZTASA;
     $elfogadas = date('Y.m.d. 00:00:00', strtotime(ELFOGADAS));
     $select = <<<QUERY
-SELECT neptunkod "Hallgató Neptun kódja",
-       '$kepzes' "Képzéskód",
-       '$felev' "Felvétel féléve",
-       CONCAT(omazonosito, '-$felev-$kepzes') "Azonosító",
-       'GEGI' "Szervezeti egység kódja",
-       DATE_FORMAT(eleje, '%Y.%m.%d. 00:00:00') "Kezdődátum",
-       DATE_FORMAT(vege, '%Y.%m.%d. 00:00:00') "Végdátum",
-       FLOOR(DATEDIFF(vege, eleje) / 7) "Időtartam egység száma",
-       'Hét' "Időtartam egysége",
-       int_ig_nev "Igazoló neve",
-       DATE_FORMAT(vege, '%Y.%m.%d. 00:00:00') "Igazolás dátuma",
-       cim "Leírás",
-       '' "Leírás_1",
-       '' "Leírás_2",
-       '' "Leírás_3",
-       '' "Leírás_4",
-       '' "Külső szervezet név",
-       '' "Szerződés kezdete",
-       '' "Szerződés vége",
-       '' "Szerződés száma",
-       '' "Szerződés megszűnésének indoka",
-       '$elfogadas' "Teljesítés elfogadásának időpontja",
-       '$elfogado' "Elfogadó neve",
-       '$elfogado_beoszt' "Elfogadó beosztása",
-       'kötelezően előírt szakmai gyakorlat' "Megnevezés",
-       int_nev "Szakmai gyakorlóhely",
-       tan_konz_nev "Gyakorlatvezető neve"
+SELECT neptunkod as "Hallgató Neptun kódja",
+       '$kepzes' as "Képzéskód",
+       '$felev' as "Felvétel féléve",
+       CONCAT(omazonosito, '-$felev-$kepzes') as "Azonosító",
+       'GEGI' as "Szervezeti egység kódja",
+       DATE_FORMAT(eleje, '%Y.%m.%d. 00:00:00') as "Kezdődátum",
+       DATE_FORMAT(vege, '%Y.%m.%d. 00:00:00') as "Végdátum",
+       FLOOR(DATEDIFF(vege, eleje) / 7) as "Időtartam egység száma",
+       'Hét' as "Időtartam egysége",
+       NVL(int_ig_nev, '') as "Igazoló neve",
+       DATE_FORMAT(vege, '%Y.%m.%d. 00:00:00') as "Igazolás dátuma",
+       NVL(cim, '') as "Leírás",
+       '' as "Leírás_1",
+       '' as "Leírás_2",
+       '' as "Leírás_3",
+       '' as "Leírás_4",
+       '' as "Külső szervezet név",
+       '' as "Szerződés kezdete",
+       '' as "Szerződés vége",
+       '' as "Szerződés száma",
+       '' as "Szerződés megszűnésének indoka",
+       '$elfogadas' as "Teljesítés elfogadásának időpontja",
+       '$elfogado' as "Elfogadó neve",
+       '$elfogado_beoszt' as "Elfogadó beosztása",
+       'Kötelezően előírt szakmai gyakorlat' as "Megnevezés",
+       NVL(int_nev, '') as "Szakmai gyakorlóhely",
+       NVL(tan_konz_nev, '') as "Gyakorlatvezető neve"
   FROM jelentkezesi_lap
  ORDER BY nev
 QUERY;
@@ -559,4 +559,19 @@ $konzulens-t jelölte ki tanszéki konzulensnek.
 Erre az e-mailre ne válaszoljon!
 MAIL;
     return smartmail( $nev, $email, $subject, $body );
+}
+
+
+function admin_mail( $nev, $neptunkod ) {
+    $to = ELFOGADO;
+    $subject = 'Jelentkezés szakmai gyakorlatra';
+    $body  = <<<MAIL
+Kedves $to!
+
+Egy hallgató $nev ($neptunkod) jelentkezett szakmai gyakorlatra vagy módosította jelentkezési adatait.
+
+---
+Erre az e-mailre ne válaszoljon!
+MAIL;
+    return smartmail( ELFOGADO, EMAIL_FROM, $subject, $body );
 }

@@ -1,5 +1,5 @@
 ﻿h1 {
-  text-align: center;
+    text-align: center;
 }
 
 textarea {
@@ -7,31 +7,35 @@ textarea {
 }
 
 .form {
-  padding: 10px;
-  width: 100%;
+    padding: 10px;
+    width: 100%;
+}
+
+.border {
+    border: 2px solid black;
+    border-collapse: collapse;
 }
 
 .form td {
-  padding: 10px 10px 3px 3px;
-  border: none;
+    padding: 10px 10px 3px 3px;
+    border: none;
 }
 
 .label-req {
-  color: red;
+    color: red;
 }
 
 .label-mand {
-  color: green;
+    color: green;
 }
 
 .form-label {
-  text-align: right;
+    text-align: right;
 }
 
 .fn {
-  margin-top: 20px;
-  border-top: 1px dotted black;
-  font-style: italic;
+    margin-top: 20px;
+    font-style: italic;
 }
 
 td.break, th.break {
@@ -42,10 +46,10 @@ td.break, th.break {
 }
 
 td.sep {
-  text-align: center;
-  font-size: 120%;
-  border: 2px solid black;
-  background: #DDDDDD;
+    text-align: center;
+    font-size: 120%;
+    border: 2px solid black;
+    background: #DDDDDD;
 }
 
 .fixed-table-body {

@@ -13,7 +13,6 @@ $_POST['int_cim'] = concatAddress(posted('int_cim'), posted('int_cim_isz'), post
 $_POST['mobil'] = concatPhone(posted('mobil'), posted('mobil_pre'), posted('mobil_post'));
 $_POST['int_konz_tel'] = trimPhone(posted('int_konz_tel'));
 $_POST['int_ig_tel'] = trimPhone(posted('int_konz_tel'));
-$_POST['jelszo'] = generatePassword();
 
 $jelentkezes = isset($_POST['jelentkezes']);
 $szerkesztes = isset($_POST['szerkesztes']);
@@ -47,7 +46,12 @@ else {
             $meaasge = "Hibás Neptun-kód vagy jelszó!";
         }
     } elseif ($jelentkezes) {
-        if (jelentkezesi_edit() && hallgato_mail($nev, $email, $neptunkod, $jelszo)) {
+        $_POST['jelszo'] = generatePassword();
+        if (jelentkezesi_edit()
+            &&
+            hallgato_mail($nev, $email, $neptunkod, $jelszo)
+            &&
+            admin_mail($nev, $neptunkod)) {
             $message = "A szakmai gyakorlatra való jelentkezés sikeresen megtörtént, erről e-mail értesítést is küldtünk a <a href=\"mailto:$email\">$email</a> címre.";
         } else {
             jelentkezesi_delete($id);
