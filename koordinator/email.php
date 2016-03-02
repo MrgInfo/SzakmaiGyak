@@ -1,6 +1,7 @@
 ﻿<?php
 
 require_once '../functions.php';
+require_once 'auth.php';
 
 load_post();
 if (! empty($_POST['h_email'])) {

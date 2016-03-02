@@ -2,6 +2,10 @@
 
 require_once "config.php";
 
+define('DB_HOST',      'localhost');
+define('DB_USER',      'szakmaigyak');
+define('DB_PASSWORD',  '/tomi');
+
 date_default_timezone_set( 'Europe/Budapest' );
 
 function load_post() {
@@ -9,13 +13,6 @@ function load_post() {
 		$_POST = array();
 		parse_str( urldecode( file_get_contents( "php://input" ) ), $_POST );
 	}
-}
-
-function load_get() {
-    if( empty( $_GET ) ) {
-        $_GET = array();
-        $_GET = filter_input(INPUT_GET, "id");
-    }
 }
 
 function posted( $name, $default = '' ) {

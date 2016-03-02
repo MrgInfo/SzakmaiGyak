@@ -9,7 +9,6 @@ $prefix = isset($_SERVER['REQUEST_URI']) && (strpos($_SERVER['REQUEST_URI'], '/k
 		<script src="<?= $prefix ?>/script/bootstrap.min.js"></script>
 		<script src="<?= $prefix ?>/script/bootstrap-table.min.js"></script>
 		<script src="<?= $prefix ?>/script/bootstrap-table-hu-HU.min.js"></script>
-		<!--suppress JSUnresolvedFunction -->
         <script>
             'use strict';
 

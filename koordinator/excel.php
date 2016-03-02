@@ -2,6 +2,7 @@
 
 require_once '../config.php';
 require_once '../functions.php';
+require_once 'auth.php';
 
 $type = filter_input(INPUT_GET, 'type');
 if ($type == 'neptun') {

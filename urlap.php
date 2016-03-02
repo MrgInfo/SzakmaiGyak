@@ -6,10 +6,14 @@ require 'header.php';
 
 ?>
 <header>
-    <h1><?= GYAKORLAT_EV ?>. évi szakmai gyakorlat</h1>
+    <h1>
+        <?= GYAKORLAT_EV ?> szakmai gyakorlat
+    </h1>
 </header>
 <div class="content">
-    <h2><?= $title ?></h2>
+    <h2>
+        <?= $title ?>
+    </h2>
 <?php
 if (! empty($missing)) {
     ?>
@@ -19,7 +23,7 @@ if (! empty($missing)) {
     <?php
 }
 ?>
-    <form action="<?= $_SERVER['PHP_SELF'] ?>" method="post">
+    <form action="<?= $_SERVER['PHP_SELF'] ?>" method="post" role="form">
         <input type="hidden" name="id" value="<?= posted( 'id' ) ?>">
         <table class="form border">
             <tbody>
@@ -143,11 +147,11 @@ else {
                         <div class="controls form-inline">
                             <div class="radio">
                                 <input type="radio" id="bsc" name="bsc" value="1" <?= posted( 'bsc', 1 ) == 1 ? 'checked' : '' ?>>
-                                <label for="bsc">BsC</label>
+                                <label for="bsc">BSc</label>
                             </div>
                             <div class="radio">
                                 <input type="radio" id="msc" name="bsc" value="0" <?= posted( 'bsc', 1 ) == 0 ? 'checked' : ''  ?>>
-                                <label for="msc">MsC</label>
+                                <label for="msc">MSc</label>
                             </div>
                         </div>
                     </td>

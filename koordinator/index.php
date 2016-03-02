@@ -1,6 +1,7 @@
 ﻿<?php
 
 require_once '../functions.php';
+require_once 'auth.php';
 
 $title = "Szakmai gyakorlat";
 $table = all_read();

@@ -1,11 +1,8 @@
 ﻿<?php
 
-define('DB_HOST',     'nikipi.gotdns.org');
-define('DB_USER',     'szakmaigyak');
-define('DB_PASSWORD', '/tomi');
-define('DB_NAME',     'szgy_itfm_2016');
-define('EMAIL_FROM',  'groma.istvan@gmail.com');
-
+define('DB_NAME',             'szgy_itfm_2016');
+define('EMAIL_FROM',          'groma.istvan@gmail.com');
+define('PASSWORD',            'admin');
 define('GYAKORLAT_KEPZESKOD', '2N-AT0');
 define('GYAKORLAT_EV',        '2015/2016/1');
 define('ELFOGADO',            'Dr. Körtélyesi Gábor');
