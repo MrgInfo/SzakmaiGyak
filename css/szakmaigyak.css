@@ -56,3 +56,8 @@ td.sep {
     height: 70%;
 }
 
+.item {
+    white-space: nowrap;
+    display: inline;
+}
+

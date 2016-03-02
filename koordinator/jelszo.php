@@ -1,60 +1,51 @@
-﻿<?
-include '../header.php';
-?>
-		<div class="jumbotron">
-			<h2>Jelszómódosítás</h2>
-<?
-$done = false;
-if( $_GET[id] ) {
-	if( $conn = connect() ) {
-		$id = escape( $_GET[id], $conn );
-		$select = <<<END
-SELECT j.nev,
-       j.email
-  FROM jelentkezesi_lap j
- WHERE j.id = $id
-END;
-		if( $result = @mysql_query( $select, $conn ) ) {
-			if( @mysql_num_rows( $result ) == 1 ) {
-				$_SQL = @mysql_fetch_array( $result );
-				$jelszo = generatePassword();
-				$jelszo_sql = escape( $jelszo, $conn );
-				$update = <<<END
-UPDATE jelentkezesi_lap
-   SET jelszo = PASSWORD($jelszo_sql)
- WHERE id = $id
-END;
-				if( @mysql_query( $update, $conn ) ) {
-					$subject = 'Jelszó változás';
-					$body  = <<<END
-Kedves $_SQL[nev]!
+﻿<?php
 
-A szakmai gyakorlat nyomtatványait ezentúl a követketző jelszó segítségével tudja letölteni: $jelszo.
+require_once '../config.php';
+require_once '../functions.php';
 
----
-Erre az e-mailre ne válaszoljon!
-END;
-					if( smartmail( $_SQL[nev], $_SQL[email], $subject, $body ) ) {
-?>
-			<p>A hallgató jelszava megváltozott, erről értesítést kapott a <a href="mailto:<?= $_SQL[email]; ?>"><?= $_SQL[email]; ?></a> címre.</p>
-<?
-						$done = true;
-					}
-				}
-			}
-			@mysql_free_result( $result );
-		}
-		disconnect( $conn );
-	}
+$title = "Jelszómódosítás";
+$modal = true;
+
+load_post();
+$id =  posted('id') ?: filter_input(INPUT_GET, 'id');
+$uj_jelszo = posted('uj_jelszo');
+
+if (! jelentkezesi_read($id, null, null)) {
+    $message = "A jelszóváltoztatás nem hajtható végre!";
+    require '../uzenet.php';
 }
-if( !$done ) { 
-?>
-			<p>A jelszóváltoztatás nem hajtható végre!</p>
-<? 
+elseif ($uj_jelszo) {
+    $nev = posted('nev');
+    $email = posted('email');
+    $jelszo = generatePassword();
+    if (jelszo_mail($nev, $email, $jelszo)
+        &&
+        jelentkezesi_password($id, $jelszo)) {
+        $message = "A hallgató jelszava megváltozott, erről értesítést kapott a <a href=\"mailto:$email\">$email</a> címre.";
+    }
+    else {
+        $message = "A jelszóváltoztatás nem hajtható végre!";
+    }
+    require '../uzenet.php';
 }
-?>
-			<p><a href="index.php" class="btn btn-default" role="button">Vissza</a></p>
-		</div>
-<?
-include '../footer.php';
-?>
+else {
+    $nev = posted('nev');
+    $neptunkod = posted('neptunkod');
+    require '../header.php';
+    ?>
+<div class="jumbotron">
+    <h2>
+        <?= $title ?>
+    </h2>
+    <form action="<?= $_SERVER['PHP_SELF'] ?>" method="post" class="form-inline" role="form">
+        <input type="hidden" name="id" value="<?= $id ?>">
+        <p>Akarja, hogy a rendszer új jelszót generáljon a <?= $nev ?> (<?= $neptunkod ?>) nevű hallgatónak?</p>
+        <div class="btn-group" role="group">
+            <button type="submit" name="uj_jelszo" value="1" class="btn btn-primary">Igen</button>
+            <button onclick="close_page();" class="btn btn-default">Nem</Button>
+        </div>
+    </form>
+</div>
+    <?php
+    require '../footer.php';
+}

@@ -83,15 +83,14 @@ END;
 	mb_internal_encoding( "utf-8" );
 	$subject = mb_encode_mimeheader( $subject, "utf-8", "B" );
 	$to = mb_encode_mimeheader( $name, "utf-8", "B" ) . " <$email>";
+    $body = <<<BODY
+$body
+
+---
+Kérjük, erre az e-mailre ne válaszoljon!
+BODY;
     $return = mail( $to, $subject, $body, $headers, "-f$from" );
 	return $return;
-}
-
-function format( $str ) {
-	return str_replace(
-		array( "\\", "%", "_", "$", "{", "}", "#", "<", ">", "&" ),
-		array( "$\setminus$", "\\%", "\\_", "\\$", "\\{", "\\}", "\\#", "$<$", "$>$", "\\&" ),
-		$str );
 }
 
 function generatePassword( $length = 8 ) {
@@ -149,13 +148,11 @@ function concatAddress( $def, $isz, $var, $kt, $hsz ) {
 function _read( $query ) {
     $conn = new mysqli( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
     if( ! $conn ) {
-        echo $conn->error;
         return false;
     }
     $conn->set_charset( 'utf8' );
     $result = $conn->query( $query );
     if( ! $result ) {
-        echo $conn->error;
         @$conn->close();
         return false;
     }
@@ -238,7 +235,7 @@ QUERY;
     }
 }
 
-function jelentkezesi_read( $id, $neptunkod, $jelszo ) {
+function jelentkezesi_read($id, $neptunkod, $jelszo) {
     $conn = new mysqli( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
     if( ! $conn ) {
         return false;
@@ -301,7 +298,6 @@ QUERY;
     return true;
 }
 
-
 function jelentkezesi_read_beautiful() {
     $select = <<<QUERY
    SELECT nev "Hallgató",
@@ -340,18 +336,27 @@ QUERY;
     return _read( $select );
 }
 
-function jelentkezesi_delete( $id ) {
-    $conn = new mysqli( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
-    if( ! $conn ) {
+function jelentkezesi_delete($id) {
+    $conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+    if (! $conn) {
         return false;
     }
-    $conn->set_charset( 'utf8' );
-    $delete = <<<COMMNAD
+    $conn->set_charset('utf8');
+    if (empty($id)) {
+        $delete = <<<COMMNAD
+DELETE FROM jelentkezesi_lap
+      WHERE id = LAST_INSERT_ID()
+COMMNAD;
+        $stmt = $conn->prepare($delete);
+    }
+    else {
+        $delete = <<<COMMNAD
 DELETE FROM jelentkezesi_lap
       WHERE id = ?
 COMMNAD;
-    $stmt = $conn->prepare( $delete );
-    $stmt->bind_param( 'i', $id );
+        $stmt = $conn->prepare($delete);
+        $stmt->bind_param('i', $id);
+    }
     $result = $stmt->execute();
     @$stmt->close();
     @$conn->close();
@@ -485,9 +490,51 @@ QUERY;
             $int_ig_email, $eleje, $vege, $bsc );
     }
     $result = $stmt->execute();
-    if( ! $result ) {
-        echo $stmt->error;
+    @$stmt->close();
+    @$conn->close();
+    return $result;
+}
+
+function jelentkezesi_password($id, $jelszo) {
+    $conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
+    if (! $conn) {
+        return false;
     }
+    $conn->set_charset('utf8');
+    $update = <<<DML
+UPDATE jelentkezesi_lap
+   SET jelszo = PASSWORD(?)
+ WHERE id = ?
+DML;
+    $stmt = $conn->prepare($update);
+    $stmt->bind_param('si', $jelszo, $id);
+    $result = $stmt->execute();
+    @$stmt->close();
+    @$conn->close();
+    return $result;
+}
+
+function konzulens_uj() {
+    $nev = posted('nev', null);
+    $beoszt = posted('beoszt', null);
+    $tel = posted('tel', null);
+    $email = posted('email', null);
+    $conn = new mysqli( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
+    if( ! $conn ) {
+        return false;
+    }
+    $conn->set_charset( 'utf8' );
+    $insert = <<<DML
+INSERT INTO konzulensek (
+            nev,
+            beoszt,
+            tel,
+            email)
+     VALUES (?, ?, ?, ?)
+DML;
+    $stmt = $conn->prepare( $insert );
+    $stmt->bind_param( 'ssss', $nev, $beoszt, $tel, $email );
+    $result = $stmt->execute();
     @$stmt->close();
     @$conn->close();
     return $result;
@@ -495,7 +542,7 @@ QUERY;
 
 function neptun() {
     $kepzes = GYAKORLAT_KEPZESKOD;
-    $felev = GYAKORLAT_FELEV;
+    $felev = GYAKORLAT_EV;
     $elfogado = ELFOGADO;
     $elfogado_beoszt = ELFOGADO_BEOSZTASA;
     $elfogadas = date('Y.m.d. 00:00:00', strtotime(ELFOGADAS));
@@ -505,13 +552,13 @@ SELECT neptunkod as "Hallgató Neptun kódja",
        '$felev' as "Felvétel féléve",
        CONCAT(omazonosito, '-$felev-$kepzes') as "Azonosító",
        'GEGI' as "Szervezeti egység kódja",
-       DATE_FORMAT(eleje, '%Y.%m.%d. 00:00:00') as "Kezdődátum",
-       DATE_FORMAT(vege, '%Y.%m.%d. 00:00:00') as "Végdátum",
-       FLOOR(DATEDIFF(vege, eleje) / 7) as "Időtartam egység száma",
+       IF(eleje, DATE_FORMAT(eleje, '%Y.%m.%d. 00:00:00'), '') as "Kezdődátum",
+       IF(vege, DATE_FORMAT(vege, '%Y.%m.%d. 00:00:00'), '') as "Végdátum",
+       FLOOR(IFNULL(DATEDIFF(vege, eleje), 0) / 7) as "Időtartam egység száma",
        'Hét' as "Időtartam egysége",
-       NVL(int_ig_nev, '') as "Igazoló neve",
+       IFNULL(int_ig_nev, '') as "Igazoló neve",
        DATE_FORMAT(vege, '%Y.%m.%d. 00:00:00') as "Igazolás dátuma",
-       NVL(cim, '') as "Leírás",
+       IFNULL(cim, '') as "Leírás",
        '' as "Leírás_1",
        '' as "Leírás_2",
        '' as "Leírás_3",
@@ -525,53 +572,53 @@ SELECT neptunkod as "Hallgató Neptun kódja",
        '$elfogado' as "Elfogadó neve",
        '$elfogado_beoszt' as "Elfogadó beosztása",
        'Kötelezően előírt szakmai gyakorlat' as "Megnevezés",
-       NVL(int_nev, '') as "Szakmai gyakorlóhely",
-       NVL(tan_konz_nev, '') as "Gyakorlatvezető neve"
+       IFNULL(int_nev, '') as "Szakmai gyakorlóhely",
+       IFNULL(tan_konz_nev, '') as "Gyakorlatvezető neve"
   FROM jelentkezesi_lap
  ORDER BY nev
 QUERY;
-    return _read( $select );
+    return _read($select);
 }
 
-function hallgato_mail( $nev, $email, $neptunkod, $jelszo ) {
+function hallgato_mail($nev, $email, $neptunkod, $jelszo) {
     $subject = 'Jelentkezés szakmai gyakorlatra';
     $body  = <<<MAIL
 Kedves $nev!
 
-Ön sikeresen jelentkezett szakmai gyakorlatra. A megadott adatokat, a tájékoztatóban megadott határidőig,
+Ön sikeresen jelentkezett szakmai gyakorlatra. A megadott adatokat, a tájékoztatóban előírt határidőig,
 a megadott Neptun-kóddal ($neptunkod) és a következő jelszó segítségével tudja módosítani: $jelszo.
-
----
-Erre az e-mailre ne válaszoljon!
 MAIL;
-    return smartmail( $nev, $email, $subject, $body );
+    return smartmail($nev, $email, $subject, $body);
 }
 
-function jovahagyas_mail( $nev, $email, $konzulens ) {
+function jovahagyas_mail($nev, $email, $konzulens) {
     $subject = 'Szakmai gyakorlat feladat jóváhagyás';
     $body  = <<<MAIL
 Kedves $nev!
 
 A szakmai gyakorlat tanszéki felelőse jóváhagyta a szakmai gyakorlata során elvégzendő feladatát és
 $konzulens-t jelölte ki tanszéki konzulensnek.
-
----
-Erre az e-mailre ne válaszoljon!
 MAIL;
-    return smartmail( $nev, $email, $subject, $body );
+    return smartmail($nev, $email, $subject, $body);
 }
 
+function jelszo_mail($nev, $email, $jelszo) {
+    $subject = 'Jelszó változás';
+    $body  = <<<MAIL
+Kedves $nev!
 
-function admin_mail( $nev, $neptunkod ) {
+A szakmai gyakorlat nyomtatványait ezentúl a követketző jelszó segítségével tudja letölteni: $jelszo.
+MAIL;
+    return smartmail($nev, $email, $subject, $body);
+}
+
+function admin_mail($nev, $neptunkod) {
     $to = ELFOGADO;
     $subject = 'Jelentkezés szakmai gyakorlatra';
     $body  = <<<MAIL
 Kedves $to!
 
-Egy hallgató $nev ($neptunkod) jelentkezett szakmai gyakorlatra vagy módosította jelentkezési adatait.
-
----
-Erre az e-mailre ne válaszoljon!
+$nev ($neptunkod) nevű hallgató szakmai gyakorlatra jelentkezett vagy módosította a jelentkezési adatait.
 MAIL;
-    return smartmail( ELFOGADO, EMAIL_FROM, $subject, $body );
+    return smartmail(ELFOGADO, EMAIL_FROM, $subject, $body);
 }

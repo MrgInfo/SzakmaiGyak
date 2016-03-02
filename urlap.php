@@ -373,8 +373,17 @@ else {
                             <input type="submit" name="jelentkezes"  value="Jelentkezés" class="btn btn-primary">
     <?php
 }
-?>
+if (! empty($modal)) {
+    ?>
+                            <button onclick="close_page();" class="btn btn-default">Mégsem</Button>
+    <?php
+}
+else {
+    ?>
                             <a href="index.php" role="button" class="btn btn-default">Mégsem</a>
+    <?php
+}
+?>
                         </div>
                     </td>
                 </tr>

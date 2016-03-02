@@ -1,94 +1,108 @@
-﻿<?
-require '../header.php';
-$done = false;
-if( $_POST[felvesz] ) {
-	if( $_POST[nev] == '' ||
-		$_POST[beoszt] == '' ||
-		$_POST[tel] == '' ||
-		$_POST[email] == '' ) {
+﻿<?php
+
+require_once '../config.php';
+require_once '../functions.php';
+
+$title = "Tanszéki konzulens";
+
+load_post();
+$nev = posted('nev');
+$beoszt = posted('beoszt');
+$tel = posted('tel');
+$email = posted('email');
+$felvesz = posted('felvesz');
+
+if ($felvesz) {
+	if (empty($nev)
+        ||
+        empty($beoszt)
+        ||
+		empty($tel)
+        ||
+		empty($email)
+    ) {
 		$errormsg = 'Nem minden kötelező mező van kitöltve!';
-	} else {
-		if( $conn = connect() ) {
-			$SQL = escape( $_POST, $conn );
-			$insert = <<<END
-INSERT INTO konzulensek
-(
-  nev,
-  beoszt,
-  tel,
-  email
-)
-VALUES
-(
-  $SQL[nev],
-  $SQL[beoszt],
-  $SQL[tel],
-  $SQL[email]
-)
-END;
-			if( @mysql_query( $insert, $conn ) ) {
-				$done = true;
-			}
-			disconnect( $conn );
-		}
-		if( !$done ) {
-			$errormsg = 'A konzulens felvétele sikertelen!';
-		}
+	}
+    elseif (! konzulens_uj()) {
+        $errormsg = 'A konzulens felvétele sikertelen!';
+    }
+    else {
+        $message = "$nev tanszéki konzules rögzítése sikeresen megtörtént.";
+        $modal = true;
+        require '../uzenet.php';
+        exit;
 	}
 }
-if( $done ) {
+
+require '../header.php';
+
 ?>
-		<div class="jumbotron">
-			<h2>Tanszéki konzulens</h2>
-			<p><?= $_POST[nev]; ?> tanszéki konzules rögzítése sikeresen megtörtént.<p>
-			<p><a href="tanszeki_konz.php" class="btn btn-default" role="button">Vissza</a></p>
-		</div>
-<?
-} else {
-?>
-		<header>
-			<h1><?=GYAKORLAT_EV; ?>. évi szakmai gyakorlat</h1>
-		</header>
-		<div class="content">
-			<h2>Tanszéki konzulens</h2>
-<?	if( $errormsg ) { ?>
-			<div class="alert alert-danger" role="alert">
-				<p><?= $errormsg; ?></p>
-			</div>
-<? 	} ?>
-			<form action="tanszeki_konz.php" method="post">
-				<table class="form">
-					<tbody>
-						<tr>
-							<td class="form-label"><label class="control-label label-req" for="nev">Neve:</label></td>
-							<td><input type="text" id="nev" name="nev" value="<?= $_POST[nev]; ?>" size="40" maxlength="35" class="form-control"></td>
-						</tr>
-						<tr>
-							<td class="form-label"><label class="control-label label-req" for="beoszt">Beosztása:</label></td>
-							<td><input type="text" id="beoszt" name="beoszt" value="<?= $_POST[beoszt]; ?>" size="40" maxlength="20" class="form-control"></td>
-						</tr>
-						<tr>
-							<td class="form-label"><label class="control-label label-req" for="tel">Telefonszáma:</label></td>
-							<td><input type="text" id="tel" name="tel" value="<?= $_POST[tel]; ?>" size="15" maxlength="20" class="form-control"></td>
-						</tr>
-						<tr>
-							<td class="form-label"><label class="control-label label-req" for="email">E-mail címe:</label></td>
-							<td><input type="email" id="email" name="email" value="<?= $_POST[email]; ?>" size="40" maxlength="30" class="form-control"></td>
-						</tr>
-						<tr>
-							<td colspan="2"><input type="submit" name="felvesz" value="Felvétel" class="btn btn-primary"></td>
-						</tr>
-					</tbody>
-				</table>
-			</form>
-		<div>
-		<footer class="fn">
-			<p><span class="label-req">Kötelezően töltendő adatok.</span></p>
-			<p><span class="label-mand">* A mező kitöltése jelentkezéshez nem, de a feladat jóváhagyásához kötelezően kitöltendő adat!</span></p>
-		</footer>
-<?
+<header>
+    <h1><?= GYAKORLAT_EV ?> szakmai gyakorlat</h1>
+</header>
+<div class="content">
+    <h2><?= $title ?></h2>
+<?php
+
+if (! empty($errormsg)) {
+    ?>
+    <div class="alert alert-danger" role="alert">
+        <p><?= $errormsg ?></p>
+    </div>
+    <?php
 }
+?>
+    <form action="tanszeki_konz.php" method="post">
+        <table class="form border">
+            <tbody>
+                <tr>
+                    <td class="sep" colspan="2"><label>Személyes adatok</label></td>
+                </tr>
+                <tr>
+                    <td class="form-label">
+                        <label class="control-label label-req" for="nev">Neve:</label>
+                    </td>
+                    <td>
+                        <input type="text" id="nev" name="nev" value="<?= $nev ?>" size="40" maxlength="35" class="form-control">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form-label">
+                        <label class="control-label label-req" for="beoszt">Beosztása:</label>
+                    </td>
+                    <td>
+                        <input type="text" id="beoszt" name="beoszt" value="<?= $beoszt ?>" size="40" maxlength="20" class="form-control">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form-label">
+                        <label class="control-label label-req" for="tel">Telefonszáma:</label>
+                    </td>
+                    <td>
+                        <input type="text" id="tel" name="tel" value="<?= $tel ?>" size="15" maxlength="20" class="form-control">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="form-label">
+                        <label class="control-label label-req" for="email">E-mail címe:</label>
+                    </td>
+                    <td>
+                        <input type="email" id="email" name="email" value="<?= $email ?>" size="40" maxlength="30" class="form-control">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="btn-group" role="group">
+                            <input type="submit" name="felvesz" value="Mentés" class="btn btn-primary">
+                            <input type="button" onclick="close_page();" value="Mégsem" class="btn btn-default">
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+<div>
+<?php
 
 require '../footer.php';
 
-?>

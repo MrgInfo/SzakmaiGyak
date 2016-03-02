@@ -14,12 +14,12 @@ require 'header.php';
 <?php
 if (! empty($modal)) {
     ?>
-        <button onclick="close_page();" class="btn btn-default">Vissza</Button>
+        <button onclick="close_page();" class="btn btn-primary">Bezárás</Button>
     <?php
 }
 else {
     ?>
-        <a href="index.php" role="button" class="btn btn-default">Vissza</a>
+        <a href="index.php" role="button" class="btn btn-primary">Vissza</a>
     <?php
 }
 ?>

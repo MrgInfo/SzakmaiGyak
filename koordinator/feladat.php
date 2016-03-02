@@ -4,6 +4,7 @@ require_once '../config.php';
 require_once '../functions.php';
 
 $title = "Feladatkiírás, módosítás";
+$modal = true;
 $readonly = true;
 $feladatkiiras = true;
 $szerkesztes = true;
