@@ -611,7 +611,7 @@ MAIL;
 
 function admin_mail($nev, $neptunkod) {
     $to = ELFOGADO;
-    $subject = 'Jelentkezés szakmai gyakorlatra';
+    $subject = '[szakmai gyakorlat] Jelentkezés szakmai gyakorlatra';
     $body  = <<<MAIL
 Kedves $to!
 

@@ -280,6 +280,14 @@ else {
                         <input type="email" id="int_ig_email" name="int_ig_email" value="<?= posted( 'int_ig_email' ) ?>" size="60" maxlength="30" class="form-control">
                     </td>
                 </tr>
+                <tr>
+                    <td class="form-label">
+                        <label class="control-label label-mand" for="igazolas">Igazolás ideje*:</label>
+                    </td>
+                    <td>
+                        <input type="date" id="igazolas" name="igazolas" value="<?= posted( 'igazolas' ) ?>" class="form-control">
+                    </td>
+                </tr>
 <?php
 if ($feladatkiiras) {
     ?>
@@ -325,7 +333,7 @@ if ($feladatkiiras) {
                 </tr>
                 <tr>
                     <td class="form-label">
-                        <label class="control-label" for="cim">Címe:</label>
+                        <label class="control-label label-mand" for="cim">Címe:</label>
                     </td>
                     <td>
                         <input type="text" id="cim" name="cim" value="<?= posted( 'cim' ) ?>" size="60" maxlength="100" class="form-control">
