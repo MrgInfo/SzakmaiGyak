@@ -62,6 +62,8 @@ function check_mandantory() {
         &&
         isset($_POST['tan_konz'])
         &&
+        ! empty($_POST['igazolas'])
+        &&
         ! empty($_POST['eleje'])
         &&
         ! empty($_POST['vege'])
@@ -111,35 +113,35 @@ function removePrefix( $phone ) {
 }
 
 function isPrefix( $phone, $prefix ) {
-	if( substr( $phone, 3, 2 ) == $prefix ) {
-        return 'selected=selected';
+    if( substr( $phone, 3, 2 ) == $prefix ) {
+	return 'selected=selected';
     }
     return '';
 }
 
 function concatPhone( $def, $pre, $post ) {
-	if( ! empty( $def ) ) {
+    if( ! empty( $def ) ) {
         return $def;
     }
-	if( strlen($pre) == 2 && strlen($post) == 7 ) {
+    if( strlen($pre) == 2 && strlen($post) == 7 ) {
         return "+36$pre$post";
     }
-	return null;
+    return null;
 }
 
 function trimPhone( $phone ) {
-	return str_replace( " ", "", $phone );
+    return str_replace( " ", "", $phone );
 }
 
 function concatAddress( $def, $isz, $var, $kt, $hsz ) {
-	if (! empty($def)) {
+    if (! empty($def)) {
         return $def;
     }
-	if (! empty($isz) && ! empty($var) && ! empty($kt) && ! empty($hsz)) {
+    if (! empty($isz) && ! empty($var) && ! empty($kt) && ! empty($hsz)) {
         $hsz = trim($hsz, '.');
         return "$isz $var, $kt $hsz.";
     }
-	return null;
+    return null;
 }
 
 function _read( $query ) {
@@ -195,6 +197,7 @@ SELECT id,
        int_ig_beoszt,
        int_ig_tel,
        int_ig_email,
+       UNIX_TIMESTAMP(igazolas) igazolas,
        cim,
        feladat,
        megjegyzes,
@@ -309,7 +312,7 @@ function jelentkezesi_read_beautiful() {
           cim "Feladat címe",
           feladat "Feladat részletezése",
           eleje "Gyakorlat kezdete",
-          eleje "Gyakorlat vége",
+          vege "Gyakorlat vége",
           int_konz_nev "Külső konzulens",
           int_konz_beoszt "K.k. beosztása",
           int_konz_tel "K.k. telefonszáma",
@@ -386,6 +389,7 @@ function jelentkezesi_edit() {
     $int_ig_beoszt = posted( 'int_ig_beoszt', null );
     $int_ig_tel = posted( 'int_ig_tel', null );
     $int_ig_email = posted( 'int_ig_email', null );
+    $igazolas = posted( 'igazolas', null );
     $eleje = posted( 'eleje', null );
     $vege = posted( 'vege', null );
     if ($tan_konz) {
@@ -433,17 +437,18 @@ UPDATE jelentkezesi_lap
        int_ig_email = ?,
        eleje = ?,
        vege = ?,
+       igazolas = ?,
        bsc = ?,
        modositas = now()
  WHERE id = ?
 QUERY;
         $stmt = $conn->prepare( $update );
-        $stmt->bind_param( 'sssissssssisssssssssssssii',
+        $stmt->bind_param( 'sssissssssissssssssssssssii',
             $allando_cim, $ideiglenes_cim, $mobil, $kollegium, $int_nev, $int_cim,
             $int_konz_nev, $int_konz_beoszt, $int_konz_tel, $int_konz_email,
             $tan_konz, $tan_konz_nev, $tan_konz_beoszt, $tan_konz_tel, $tan_konz_email,
             $cim, $feladat, $megjegyzes, $int_ig_nev, $int_ig_beoszt, $int_ig_tel,
-            $int_ig_email, $eleje, $vege, $bsc, $id );
+            $int_ig_email, $eleje, $vege, $igazolas, $bsc, $id );
     }
     else {
         $insert = <<<QUERY
@@ -470,13 +475,14 @@ INSERT INTO jelentkezesi_lap (
             int_ig_beoszt,
             int_ig_tel,
             int_ig_email,
+	    igazolas,
             eleje,
             vege,
             bsc)
      VALUES (
         ?, UPPER(?), ?, PASSWORD(?), ?,
         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 QUERY;
         $stmt = $conn->prepare( $insert );
         $stmt->bind_param( 'ssssssssisssssssssssssssi',
@@ -484,7 +490,7 @@ QUERY;
             $allando_cim, $ideiglenes_cim, $mobil, $kollegium, $int_nev, $int_cim,
             $int_konz_nev, $int_konz_beoszt, $int_konz_tel, $int_konz_email,
             $cim, $feladat, $megjegyzes, $int_ig_nev, $int_ig_beoszt, $int_ig_tel,
-            $int_ig_email, $eleje, $vege, $bsc );
+            $int_ig_email, $igazolas, $eleje, $vege, $bsc );
     }
     $result = $stmt->execute();
     @$stmt->close();
@@ -551,10 +557,10 @@ SELECT neptunkod as "Hallgató Neptun kódja",
        'GEGI' as "Szervezeti egység kódja",
        IF(eleje, DATE_FORMAT(eleje, '%Y.%m.%d. 00:00:00'), '') as "Kezdődátum",
        IF(vege, DATE_FORMAT(vege, '%Y.%m.%d. 00:00:00'), '') as "Végdátum",
-       FLOOR(IFNULL(DATEDIFF(vege, eleje), 0) / 7) as "Időtartam egység száma",
+       CEIL(IFNULL(DATEDIFF(vege, eleje), 0) / 7) as "Időtartam egység száma",
        'Hét' as "Időtartam egysége",
        IFNULL(int_ig_nev, '') as "Igazoló neve",
-       IF(vege, DATE_FORMAT(vege, '%Y.%m.%d. 00:00:00'), '') as "Igazolás dátuma",
+       IF(igazolas, DATE_FORMAT(igazolas, '%Y.%m.%d. 00:00:00'), '') as "Igazolás dátuma",
        IFNULL(cim, '') as "Leírás",
        '' as "Leírás_1",
        '' as "Leírás_2",
@@ -570,7 +576,7 @@ SELECT neptunkod as "Hallgató Neptun kódja",
        '$elfogado_beoszt' as "Elfogadó beosztása",
        'Kötelezően előírt szakmai gyakorlat' as "Megnevezés",
        IFNULL(int_nev, '') as "Szakmai gyakorlóhely",
-       IFNULL(tan_konz_nev, '') as "Gyakorlatvezető neve"
+       IFNULL(int_konz_nev, '') as "Gyakorlatvezető neve"
   FROM jelentkezesi_lap
  ORDER BY nev
 QUERY;

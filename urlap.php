@@ -333,7 +333,7 @@ if ($feladatkiiras) {
                 </tr>
                 <tr>
                     <td class="form-label">
-                        <label class="control-label label-mand" for="cim">Címe:</label>
+                        <label class="control-label label-mand" for="cim">Címe*:</label>
                     </td>
                     <td>
                         <input type="text" id="cim" name="cim" value="<?= posted( 'cim' ) ?>" size="60" maxlength="100" class="form-control">

@@ -24,7 +24,8 @@ else {
             row[ 8] && row[ 9] && row[10] &&
             row[11] && row[12] && row[15] &&
             row[16] && row[19] && row[20] &&
-            row[23] && row[26] && row[27] )
+            row[23] && row[26] && row[27] &&
+            row[28])
         {
             return { classes: 'success' };
         }
@@ -96,6 +97,7 @@ else {
                 <th data-sortable="true">Képzés típusa</th>
                 <th data-sortable="true">Gyakorlat kezdete</th>
                 <th data-sortable="true">Gyakorlat vége</th>
+                <th data-sortable="true">Igazolás ideje</th>
                 <th>Megjegyzés</th>
                 <th data-sortable="true">Jelentkezés ideje</th>
                 <th data-sortable="true">Módosítás ideje</th>
@@ -140,6 +142,7 @@ else {
                 <td><?= $row['bsc'] ? 'BSc' : 'MSc' ?></td>
                 <td><?= empty( $row['eleje'] ) ? '' : date( 'Y.m.d.', $row['eleje'] ) ?></td>
                 <td><?= empty( $row['vege'] ) ? '' : date( 'Y.m.d.', $row['vege'] ) ?></td>
+		<td><?= empty( $row['igazolas'] ) ? '' : date( 'Y.m.d.', $row['igazolas'] ) ?></td>
                 <td class="break"><?= strlen( $row['megjegyzes'] ) > 50 ? substr( $row['megjegyzes'], 0, 47 ) . '...' : $row['megjegyzes'] ?></td>
                 <td><?= date( 'Y.m.d. H:m', $row['jelentkezes'] ) ?></td>
                 <td><?= empty( $row['modositas'] ) ? '' : date( 'Y.m.d. H:m', $row['modositas'] ) ?></td>
