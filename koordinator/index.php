@@ -66,7 +66,7 @@ else {
     <table data-toggle="table" data-locale="hu-HU" data-classes="table table-striped"
            data-search="true"
            data-toolbar="#toolbar" data-row-style="rowStyle"
-           data-pagination="true" data-smart-display="true" data-page-size="10" data-striped="true">
+           data-pagination="true" data-smart-display="false" data-page-list="10, 25, 100" data-page-size="100" data-striped="false">
         <thead>
             <tr>
                 <th data-align="center">Műveletek</th>
