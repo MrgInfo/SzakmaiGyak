@@ -1,7 +1,7 @@
 ﻿<?php
 
 define('DB_NAME',             'szgy_itfm_2016');
-define('EMAIL_FROM',          'groma.istvan@gmail.com');
+define('EMAIL_FROM',          'kortelyesi.gabor@gt3.bme.hu');
 define('PASSWORD',            'admin');
 define('GYAKORLAT_KEPZESKOD', '2N-AT0');
 define('GYAKORLAT_EV',        '2015/2016/1');

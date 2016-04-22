@@ -289,7 +289,7 @@ else {
                     </td>
                 </tr>
 <?php
-if ($feladatkiiras) {
+if (! empty($feladatkiiras)) {
     ?>
                 <tr>
                     <td class="sep" colspan="2"><label>Tanszéki konzulens</label></td>
@@ -375,7 +375,7 @@ if ($feladatkiiras) {
                     <td colspan="2">
                         <div class="btn-group" role="group">
 <?php
-if ($szerkesztes) {
+if (! empty($szerkesztes)) {
     ?>
                             <input type="submit" name="szerkesztes" value="Módosítás" class="btn btn-primary">
     <?php

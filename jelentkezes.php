@@ -29,9 +29,9 @@ if ($jelentkezes) {
         ) {
             $message = "A szakmai gyakorlatra való jelentkezés sikeresen megtörtént, erről e-mail értesítést is küldtünk a <a href=\"mailto:$email\">$email</a> címre.";
         } else {
+	    $message = "Ezzel a NEPTUN kóddal és/vagy Oktatási azonosítóval már regisztráltak!";
             jelentkezesi_delete(null);
-            $message = "Ezzel a NEPTUN kóddal és/vagy Oktatási azonosítóval már regisztráltak!";
-        }
+	}
         require 'uzenet.php';
     }
     else {

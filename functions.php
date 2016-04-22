@@ -89,7 +89,10 @@ $body
 Kérjük, erre az e-mailre ne válaszoljon!
 BODY;
     $return = mail( $to, $subject, $body, $headers, "-f$from" );
-	return $return;
+    if(! $return) {
+	print_r(error_get_last());
+    }
+    return $return;
 }
 
 function generatePassword( $length = 8 ) {
@@ -405,7 +408,7 @@ function jelentkezesi_edit() {
         $tan_konz_tel = null;
         $tan_konz_email = null;
     }
-    $conn = new mysqli( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
+    $conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
     if( ! $conn ) {
         return false;
     }
@@ -485,12 +488,13 @@ INSERT INTO jelentkezesi_lap (
         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 QUERY;
         $stmt = $conn->prepare( $insert );
-        $stmt->bind_param( 'ssssssssisssssssssssssssi',
+        $stmt->bind_param( 'ssssssssissssssssssssssssi',
             $nev, $neptunkod, $omazonosito, $jelszo, $email,
-            $allando_cim, $ideiglenes_cim, $mobil, $kollegium, $int_nev, $int_cim,
-            $int_konz_nev, $int_konz_beoszt, $int_konz_tel, $int_konz_email,
-            $cim, $feladat, $megjegyzes, $int_ig_nev, $int_ig_beoszt, $int_ig_tel,
-            $int_ig_email, $igazolas, $eleje, $vege, $bsc );
+            $allando_cim, $ideiglenes_cim, $mobil, $kollegium, $int_nev,
+	    $int_cim, $int_konz_nev, $int_konz_beoszt, $int_konz_tel, $int_konz_email,
+            $cim, $feladat, $megjegyzes, $int_ig_nev, $int_ig_beoszt,
+	    $int_ig_tel, $int_ig_email, $igazolas, $eleje, $vege,
+	    $bsc );
     }
     $result = $stmt->execute();
     @$stmt->close();
@@ -616,10 +620,10 @@ MAIL;
 }
 
 function admin_mail($nev, $neptunkod) {
-    $to = ELFOGADO;
+    $admin = ELFOGADO;
     $subject = '[szakmai gyakorlat] Jelentkezés szakmai gyakorlatra';
     $body  = <<<MAIL
-Kedves $to!
+Kedves $admin!
 
 $nev ($neptunkod) nevű hallgató szakmai gyakorlatra jelentkezett vagy módosította a jelentkezési adatait.
 MAIL;
