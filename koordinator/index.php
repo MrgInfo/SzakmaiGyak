@@ -157,6 +157,7 @@ else {
     <a href="excel.php" target="_blank" role="button" class="btn btn-default">Excel</a>
     <a href="excel.php?type=neptun" target="_blank" role="button" class="btn btn-default">Neptun</a>
     <a href="excel.php?type=9050" target="_blank" role="button" class="btn btn-default">FRKP-9050</a>
+    <a href="../jelentkezes.php" target="_blank" role="button" class="btn btn-default">Utólagos regisztráció</a>
     <a href="setup.php" target="_blank" role="button" class="btn btn-default">Beállítások</a>
 </div>
 	<?php

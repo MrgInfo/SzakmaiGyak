@@ -8,6 +8,7 @@ require 'header.php';
 <header>
     <h1>
         <?= GYAKORLAT_EV ?> szakmai gyakorlat
+	<?php /*var_dump($_POST);*/ ?>
     </h1>
 </header>
 <div class="content">
@@ -250,7 +251,7 @@ else {
                 </tr>
                 <tr>
                     <td class="form-label">
-                        <label class="control-label label-mand" for="int_ig_nev">Neve*:</label>
+                        <label class="control-label" for="int_ig_nev">Neve:</label>
                     </td>
                     <td>
                         <input type="text" id="int_ig_nev" name="int_ig_nev" value="<?= posted( 'int_ig_nev' ) ?>" size="60" maxlength="35" class="form-control">
@@ -274,7 +275,7 @@ else {
                 </tr>
                 <tr>
                     <td class="form-label">
-                        <label class="control-label label-mand" for="int_ig_email">E-mail címe*:</label>
+                        <label class="control-label" for="int_ig_email">E-mail címe:</label>
                     </td>
                     <td>
                         <input type="email" id="int_ig_email" name="int_ig_email" value="<?= posted( 'int_ig_email' ) ?>" size="60" maxlength="30" class="form-control">
@@ -282,7 +283,7 @@ else {
                 </tr>
                 <tr>
                     <td class="form-label">
-                        <label class="control-label label-mand" for="igazolas">Igazolás ideje*:</label>
+                        <label class="control-label" for="igazolas">Igazolás ideje:</label>
                     </td>
                     <td>
                         <input type="date" id="igazolas" name="igazolas" value="<?= posted( 'igazolas' ) ?>" class="form-control">

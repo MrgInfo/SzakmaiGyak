@@ -11,7 +11,7 @@ $_POST['ideiglenes_cim'] = concatAddress(posted('ideiglenes_cim'), posted('ideig
 $_POST['int_cim'] = concatAddress(posted('int_cim'), posted('int_cim_isz'), posted('int_cim_var'), posted('int_cim_kt'), posted('int_cim_hsz'));
 $_POST['mobil'] = concatPhone(posted('mobil'), posted('mobil_pre'), posted('mobil_post'));
 $_POST['int_konz_tel'] = trimPhone(posted('int_konz_tel'));
-$_POST['int_ig_tel'] = trimPhone(posted('int_konz_tel'));
+$_POST['int_ig_tel'] = trimPhone(posted('int_ig_tel'));
 $jelentkezes = isset($_POST['jelentkezes']);
 $szerkesztes = isset($_POST['szerkesztes']);
 
@@ -73,4 +73,3 @@ elseif ($szerkesztes) {
 else {
     require 'urlap.php';
 }
-

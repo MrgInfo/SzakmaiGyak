@@ -54,21 +54,17 @@ function check_mandantory() {
         &&
         ! empty($_POST['int_konz_nev'])
         &&
-        ! empty($_POST['int_konz_emial'])
+        ! empty($_POST['int_konz_email'])
         &&
-        ! empty($_POST['int_ig_nev'])
-        &&
-        ! empty($_POST['int_ig_emial'])
-        &&
-        isset($_POST['tan_konz'])
-        &&
-        ! empty($_POST['igazolas'])
-        &&
+        ! empty($_POST['cim'])
+	&&
         ! empty($_POST['eleje'])
         &&
         ! empty($_POST['vege'])
         &&
-        ! empty($_POST['feladat']);
+        ! empty($_POST['feladat'])
+	&&
+        isset($_POST['tan_konz']);
 }
 
 function smartmail( $name, $email, $subject, $body ) {
@@ -111,32 +107,32 @@ function generatePassword( $length = 8 ) {
 	return $password;
 }
 
-function removePrefix( $phone ) {
-	return substr( $phone, 5 );
+function removePrefix($phone) {
+	return substr($phone, 5);
 }
 
-function isPrefix( $phone, $prefix ) {
-    if( substr( $phone, 3, 2 ) == $prefix ) {
+function isPrefix($phone, $prefix) {
+    if(substr($phone, 3, 2) == $prefix) {
 	return 'selected=selected';
     }
     return '';
 }
 
-function concatPhone( $def, $pre, $post ) {
-    if( ! empty( $def ) ) {
+function concatPhone($def, $pre, $post) {
+    if(! empty($def)) {
         return $def;
     }
-    if( strlen($pre) == 2 && strlen($post) == 7 ) {
+    if(strlen($pre) == 2 && strlen($post) == 7) {
         return "+36$pre$post";
     }
     return null;
 }
 
-function trimPhone( $phone ) {
-    return str_replace( " ", "", $phone );
+function trimPhone($phone) {
+    return str_replace(" ", "", $phone);
 }
 
-function concatAddress( $def, $isz, $var, $kt, $hsz ) {
+function concatAddress($def, $isz, $var, $kt, $hsz) {
     if (! empty($def)) {
         return $def;
     }
@@ -147,7 +143,7 @@ function concatAddress( $def, $isz, $var, $kt, $hsz ) {
     return null;
 }
 
-function _read( $query ) {
+function _read($query) {
     $conn = new mysqli( DB_HOST, DB_USER, DB_PASSWORD, DB_NAME );
     if( ! $conn ) {
         return false;
@@ -213,7 +209,7 @@ QUERY;
     return _read( $select );
 }
 
-function konzulens_read( $id ) {
+function konzulens_read($id) {
     if (empty($id)) {
         $select = <<<QUERY
   SELECT id,
@@ -226,10 +222,10 @@ QUERY;
     }
     else {
         $select = <<<QUERY
-  SELECT nev tan_konz_nev,
-         beoszt tan_konz_beoszt,
-         tel tan_konz_tel,
-         email tan_konz_email
+  SELECT nev,
+         beoszt,
+         tel,
+         email
     FROM konzulensek
    WHERE id = $id
 QUERY;
@@ -274,7 +270,8 @@ SELECT id,
        feladat,
        megjegyzes,
        eleje,
-       vege
+       vege,
+       igazolas
   FROM jelentkezesi_lap
  WHERE (id = ?)
     OR (neptunkod = UPPER(?) AND jelszo = PASSWORD(?))

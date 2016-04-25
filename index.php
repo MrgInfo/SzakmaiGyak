@@ -15,7 +15,7 @@ if (strtotime(JEL_HATARIDO) > strtotime('now')) {
 	?>
     <form action="jelentkezes.php" method="post" class="form-inline" role="form">
         <p>A szakmai gyakorlatra való jelentkezés módja a regisztrációs űrlap kitöltése.</p>
-        <input type="submit" value="Regsiztráció" class="btn btn-default" />
+        <input type="submit" value="Regisztráció" class="btn btn-default" />
     </form>
 	<?php
 }
