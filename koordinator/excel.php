@@ -10,7 +10,7 @@ if ($type == 'neptun') {
     $name = $type;
 }
 elseif ($type == '9050') {
-    $table = null;
+    $table = frkp_read();
     $name = $type;
 }
 else {

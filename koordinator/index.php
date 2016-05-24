@@ -66,7 +66,8 @@ else {
     <table data-toggle="table" data-locale="hu-HU" data-classes="table table-striped"
            data-search="true"
            data-toolbar="#toolbar" data-row-style="rowStyle"
-           data-pagination="true" data-smart-display="false" data-page-list="10, 25, 100" data-page-size="100" data-striped="false">
+           data-pagination="true" data-smart-display="false" data-page-list="10, 25, 100" data-page-size="100" data-striped="false"
+           data-sort-name="jelentkezes" data-sort-order="desc">
         <thead>
             <tr>
                 <th data-align="center">Műveletek</th>
@@ -99,7 +100,7 @@ else {
                 <th data-sortable="true">Gyakorlat vége</th>
                 <th data-sortable="true">Igazolás ideje</th>
                 <th>Megjegyzés</th>
-                <th data-sortable="true">Jelentkezés ideje</th>
+                <th data-sortable="true" data-field="jelentkezes">Jelentkezés ideje</th>
                 <th data-sortable="true">Módosítás ideje</th>
             </tr>
         </thead>

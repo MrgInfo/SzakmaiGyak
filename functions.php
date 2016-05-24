@@ -336,6 +336,22 @@ QUERY;
     return _read( $select );
 }
 
+
+function frkp_read() {
+    $select = <<<QUERY
+   SELECT (@rn:=@rn+1) "Ssz.",
+          int_nev "Szakmai gyakorlóhely neve",
+          int_cim "Szakmai gyakorlóhely címe",
+          ('gazdálkodó szervezet') "Szakmai gyakorlóhely típusa",
+          ('ipari termék- és formatervező mérnök alapszak, ipari terméktervező mérnöki mesterképzési szak') "Képzés, amelyhez a szakmai gyakorlóhely kapcsolódik",
+          IF(eleje, DATE_FORMAT(eleje, '%Y.%m.%d.'), '') "Gyakorlóhelyi jelleg kezdete",
+          IF(vege, DATE_FORMAT(vege, '%Y.%m.%d.'), '') "Gyakorlóhelyi jelleg vége"
+     FROM (SELECT * FROM jelentkezesi_lap WHERE int_nev IS NOT NULL AND int_nev<>'') t1,
+          (SELECT @rn:=0) t2
+QUERY;
+    return _read( $select );
+}
+
 function jelentkezesi_delete($id) {
     $conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
     if (! $conn) {
@@ -394,10 +410,10 @@ function jelentkezesi_edit() {
     $vege = posted( 'vege', null );
     if ($tan_konz) {
         $db = konzulens_read($tan_konz);
-        $tan_konz_nev = $db['tan_konz_nev'];
-        $tan_konz_beoszt =  $db['tan_konz_beoszt'];
-        $tan_konz_tel = $db['tan_konz_tel'];
-        $tan_konz_email = $db['tan_konz_email'];
+        $tan_konz_nev = $db['nev'];
+        $tan_konz_beoszt =  $db['beoszt'];
+        $tan_konz_tel = $db['tel'];
+        $tan_konz_email = $db['email'];
     }
     else {
         $tan_konz_nev = null;
@@ -611,7 +627,7 @@ function jelszo_mail($nev, $email, $jelszo) {
     $body  = <<<MAIL
 Kedves $nev!
 
-A szakmai gyakorlat nyomtatványait ezentúl a követketző jelszó segítségével tudja letölteni: $jelszo.
+Jelszava megváltozott! A Szakmai gyakorlat nyilvántartó rendszert  ezentúl a következő jelszó segítségével tudja elérni: $jelszo.
 MAIL;
     return smartmail($nev, $email, $subject, $body);
 }
